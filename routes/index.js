@@ -12,16 +12,4 @@ router.get("/intro", (req, res) => {
     res.render("intro");
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
 module.exports = router;
