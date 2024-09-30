@@ -47,10 +47,7 @@ router.post("/login", async (req, res) => {
     if (!email || !password) return res.status(401).send("Enter all the required fields");
     let user = await userModel.findOne({ email: email });
 
-    // If the user exists but registered via OAuth, redirect them to OAuth login
-    if (user && user.isOAuthUser) {
-        return res.status(401).send("Please log in using your OAuth provider (Google, etc.).");
-    }
+    
 
     if (!user) return res.status(401).send("Email or password is incorrect!");
 
@@ -64,6 +61,10 @@ router.post("/login", async (req, res) => {
         }
     });
 });
+router.get("/logout",(req,res)=>{
+    res.clearCookie("token")
+    res.redirect("/")
+})
 
 // OAuth Google login route
 router.get('/auth/google',
