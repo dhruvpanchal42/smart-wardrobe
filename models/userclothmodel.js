@@ -32,13 +32,22 @@ const userClothSchema = mongoose.Schema({
         required: true,
         enum: ['Cotton', 'Wool', 'Polyester', 'Silk'], // Limit to specified fabric types
     },
+    occasion: {
+        type: String,
+        enum: ['Casual', 'Formal', 'Sports', 'Party'],
+        default: 'Casual',
+    },
+    weather: {
+        type: String,
+        enum: ['Sunny', 'Rainy', 'Cold'],
+        default: 'Sunny',
+    },
     image: {
-        type: String, // Store the image path uploaded via multer
-        required: true, // Ensure that image is required
+        type: String, // Store the image URL after upload to Firebase
+        required: true,
     },
 }, {
     timestamps: true, // Automatically create createdAt and updatedAt fields
 });
 
-// Export the model
 module.exports = mongoose.model("UserCloth", userClothSchema);

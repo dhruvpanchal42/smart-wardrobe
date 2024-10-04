@@ -44,7 +44,7 @@
             color: #F56565;
             text-decoration: none;
             padding: 1rem 0;
-            text-align: center;
+            text-align: left;
             width: 100%;
         }
 
@@ -61,7 +61,6 @@
 
         .notification {
             display: none;
-            background-color: #38a169;
             color: white;
             padding: 1rem;
             margin-top: 1rem;
@@ -80,18 +79,18 @@
     <nav class="bg-gray-800 text-white p-4 flex justify-between items-center">
         <!-- Logo Section -->
         <div class="flex items-center">
-            <span class="text-xl font-bold text-purple-400 mr-2">D Cube</span> <!-- Added margin to separate text and image -->
-            <img src="/images/logo.jpg" alt="D Cube Logo" class="w-10 h-10"> <!-- Added width and height -->
+            <span class="text-xl font-bold text-purple-400 mr-2">D Cube</span>
+            <img src="/images/logo.jpg" alt="D Cube Logo" class="w-10 h-10">
         </div>
-    
+
         <!-- Navigation Links Section for large screens -->
         <div class="hidden lg:flex items-center space-x-6 ml-auto">
             <a href="/intro" class="text-white-400 hover:text-red-500">Home</a>
-            <a href="/intro" class="text-white-400 hover:text-red-500">About</a>
-            <a href="/intro" class="text-white-400 hover:text-red-500">Contact us</a>
+            <a href="/about" class="text-white-400 hover:text-red-500">About</a>
+            <a href="/contact" class="text-white-400 hover:text-red-500">Contact us</a>
             <a href="/users/logout" class="text-red-400 hover:text-red-500">Logout</a>
         </div>
-    
+
         <!-- Hamburger menu button for small screens -->
         <div class="md:hidden">
             <button id="menuButton" class="focus:outline-none">
@@ -101,28 +100,39 @@
             </button>
         </div>
     </nav>
-    
 
     <div id="mobile-menu" class="flex flex-col items-start space-y-4 hidden">
         <button class="close-btn" id="closeButton">&times;</button>
-        <div class="flex-grow flex items-center justify-center">
-            <a href="/users/logout" class="text-red-400">Logout</a>
-        </div>
+        <a href="/intro" class="text-white">Home</a>
+        <a href="/about" class="text-white">About</a>
+        <a href="/contact" class="text-white ">Contact us</a>
+        <a href="/users/logout" class="text-red-400 hover:text-red-500">Logout</a>
     </div>
 
     <div class="bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-md w-full mx-auto mt-4">
         <h2 class="text-2xl font-bold mb-6 text-center">Add Clothes to Your Wardrobe</h2>
+
+        <!-- Display flash messages -->
+        <% if (error.length > 0) { %>
+            <div class="notification" style="background-color: #e53e3e;">
+                <%= error.join('<br>') %>
+            </div>
+        <% } %>
+        <% if (success.length > 0) { %>
+            <div class="notification" style="background-color: #38a169;">
+                <%= success.join('<br>') %>
+            </div>
+        <% } %>
+
         <form id="addClothesForm" action="/clothes/add-clothes" method="POST" enctype="multipart/form-data">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="name" class="block mb-2">Clothing Name</label>
-                    <input type="text" id="name" name="name" class="w-full p-2 rounded"
-                        placeholder="Enter clothing name" required>
+                    <input type="text" id="name" name="name" class="w-full p-2 rounded" placeholder="Enter clothing name" required>
                 </div>
                 <div>
                     <label for="category" class="block mb-2">Category</label>
-                    <select id="category" name="category" class="w-full p-2 rounded"
-                        onchange="updateSubcategory(this.value)" required>
+                    <select id="category" name="category" class="w-full p-2 rounded" onchange="updateSubcategory(this.value)" required>
                         <option value="">Select Category</option>
                         <option value="Men">Men</option>
                         <option value="Women">Women</option>
@@ -141,10 +151,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="color" class="block mb-2">Color</label>
-                    <input type="text" id="color" name="color" class="w-full p-2 rounded" placeholder="Enter color"
-                        required>
+                    <input type="text" id="color" name="color" class="w-full p-2 rounded" placeholder="Enter color" required>
                 </div>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="fabric" class="block mb-2">Fabric Type</label>
@@ -158,6 +168,27 @@
                 </div>
             </div>
 
+            <!-- New fields for occasion and weather -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="occasion" class="block mb-2">Occasion</label>
+                    <select id="occasion" name="occasion" class="w-full p-2 rounded" required>
+                        <option value="Casual">Casual</option>
+                        <option value="Formal">Formal</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Party">Party</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="weather" class="block mb-2">Weather</label>
+                    <select id="weather" name="weather" class="w-full p-2 rounded" required>
+                        <option value="Sunny">Sunny</option>
+                        <option value="Rainy">Rainy</option>
+                        <option value="Cold">Cold</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="image" class="block mb-2">Image Upload</label>
@@ -167,8 +198,7 @@
                 </div>
             </div>
 
-            <button type="submit"
-                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full">Add Clothes</button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full">Add Clothes</button>
         </form>
     </div>
 

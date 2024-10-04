@@ -10,9 +10,9 @@ const indexRouter = require('./routes/index');
 const userRouter = require('./routes/userRouter');
 const clothRouter = require('./routes/clothRouter')
 const connectDB = require('./config/mongoose-connection');
-
-
+const admin = require('firebase-admin');
 const app = express();
+
 
 // Middlewares
 app.use(express.json());
@@ -32,7 +32,7 @@ app.use(expressSession({
 
 // Initialize Passport.js for OAuth
 app.use(passport.initialize());
-app.use(passport.session()); // Initialize passport session (necessary for persistent login)
+app.use(passport.session()); 
 
 // Define routes
 app.use('/', indexRouter);
