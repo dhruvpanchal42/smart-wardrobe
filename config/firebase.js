@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('../d-cube-c3ae9-firebase-adminsdk-zajcc-fe1750d493.json'); // Adjust the path as needed
+const serviceAccount = require('../d-cube-c3ae9-firebase-adminsdk-zajcc-fe1750d493.json'); 
 
 // Check if Firebase app has already been initialized
 if (!admin.apps.length) {
