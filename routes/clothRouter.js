@@ -18,40 +18,39 @@ const upload = multer({
         if (extname && mimetype) {
             return cb(null, true);
         } else {
-            cb(new Error('Only image files (jpeg, jpg, png, gif) are allowed.'));
+            return cb(new Error("Only jpeg, jpg, png files are allowed"), false);
         }
     }
 });
 
 // Route to add clothes
 router.post('/add-clothes', isLoggedIn, upload.single('image'), [
-    check('name').notEmpty().withMessage('Clothing name is required.'),
-    check('category').notEmpty().withMessage('Category is required.'),
+    check('gender').notEmpty().withMessage('Gender is required.'),
     check('subcategory').notEmpty().withMessage('Subcategory is required.'),
+    check('size').notEmpty().withMessage('Size is required.'),
     check('color').notEmpty().withMessage('Color is required.'),
     check('fabric').notEmpty().withMessage('Fabric type is required.'),
     check('occasion').notEmpty().withMessage('Occasion is required.'),
     check('weather').notEmpty().withMessage('Weather type is required.'),
 ], async (req, res) => {
     const errors = validationResult(req);
+    
     if (!errors.isEmpty()) {
         req.flash('error', errors.array().map(err => err.msg).join(', ')); // Set flash error messages
-        return res.redirect('/add-clothes'); // Redirect to add-clothes on error
+        return res.redirect('/clothes/add-clothes'); // Redirect if there are validation errors
     }
-
-    const { name, category, subcategory, color, fabric, occasion, weather } = req.body;
 
     if (!req.file) {
         req.flash('error', 'Image is required.'); // Set flash error message
-        return res.redirect('/add-clothes'); // Redirect to add-clothes on error
+        return res.redirect('/clothes/add-clothes'); // Redirect to add-clothes on error
     }
 
+    const { gender, size, subcategory, color, fabric, occasion, weather } = req.body;
+
     try {
-        // Create a unique file name for Firebase Storage
         const filename = `${Date.now()}_${req.file.originalname}`;
         const file = bucket.file(filename);
 
-        // Upload the file to Firebase Storage
         const stream = file.createWriteStream({
             metadata: {
                 contentType: req.file.mimetype,
@@ -61,46 +60,56 @@ router.post('/add-clothes', isLoggedIn, upload.single('image'), [
         stream.on('error', (err) => {
             console.error('Upload to Firebase failed:', err);
             req.flash('error', 'Upload failed, please try again later.'); // Set flash error message
-            return res.redirect('/add-clothes'); // Redirect to add-clothes on error
+            return res.redirect('/clothes/add-clothes'); // Redirect on error
         });
 
         stream.on('finish', async () => {
-            // File upload completed
             const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(file.name)}?alt=media`;
 
-            // Save clothing data to your database
             const userId = req.user._id; // Get user ID from session
             const newCloth = new UserCloth({
                 userId,
-                name,
-                category,
+                gender,
                 subcategory,
+                size,
                 color,
                 fabric,
-                occasion, // Save occasion to the database
-                weather,  // Save weather to the database
+                occasion,
+                weather,
                 image: imageUrl, // Save the Firebase Storage URL in the database
             });
 
             await newCloth.save(); // Save new clothing item to DB
-            req.flash('success', 'Clothing item successfully added to your wardrobe.'); // Set flash success message
-            res.redirect('/add-clothes'); // Redirect to add-clothes on success
+            req.flash("success", "Clothing item successfully added to your wardrobe."); // Set flash success message
+            return res.redirect('/clothes/successpage'); // Redirect on success
         });
 
         stream.end(req.file.buffer); // Upload the file buffer to Firebase
     } catch (error) {
         console.error('Error adding clothes:', error);
         req.flash('error', 'Server error, please try again later.'); // Set flash error message
-        res.redirect('/add-clothes'); // Redirect to add-clothes on error
+        return res.redirect('/clothes/add-clothes'); // Redirect to add-clothes on error
     }
 });
 
-// Add this route to your clothRouter.js
-router.get('/wardrobe', isLoggedIn, async (req, res) => {
+// Route to render the add clothes page
+router.get('/add-clothes', (req, res) => {
+    // Get flash messages from session
+    const error = req.flash('error');
+    const success = req.flash('success');
+    
+    res.render('add-clothes', { error, success }); // Pass error and success to the view
+});
+router.get("/successpage",(req,res)=>{
+    res.render("successpage")
+})
+
+// Route to get outfits based on filters
+router.get('/get-outfits', isLoggedIn, async (req, res) => {
     const userId = req.user._id; // Get the logged-in user's ID
 
     // Get the filter values from the query parameters
-    const { occasion = '', weather = '', subcategory = '', color = '', fabric = '' } = req.query;
+    const { gender = '', size = '', occasion = '', weather = '', subcategory = '', color = '', fabric = '' } = req.query;
 
     // Construct the filter conditions based on the provided query parameters
     const filterConditions = {
@@ -108,6 +117,8 @@ router.get('/wardrobe', isLoggedIn, async (req, res) => {
     };
 
     if (occasion) filterConditions.occasion = occasion;
+    if (gender) filterConditions.gender = gender; 
+    if (size) filterConditions.size = size; 
     if (weather) filterConditions.weather = weather;
     if (subcategory) filterConditions.subcategory = subcategory;
     if (color) filterConditions.color = color;
@@ -124,6 +135,8 @@ router.get('/wardrobe', isLoggedIn, async (req, res) => {
             subcategory,
             color,
             fabric,
+            gender,
+            size
         });
     } catch (error) {
         console.error('Error fetching wardrobe:', error);
@@ -132,4 +145,4 @@ router.get('/wardrobe', isLoggedIn, async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = router; 

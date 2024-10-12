@@ -39,8 +39,8 @@ app.use('/', indexRouter);
 app.use('/users', userRouter);
 app.use('/clothes', clothRouter);
 
-// Flash messages
-app.use(flash());
+
+
 
 // Static files and view engine
 app.use(express.static(path.join(__dirname, 'public')));

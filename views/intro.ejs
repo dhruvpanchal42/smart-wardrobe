@@ -4,135 +4,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wardrobe</title>
+    <title>Smart Wardrobe</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
     <style>
-        body,
-        html {
-            height: 100%;
+        /* Gradient background with animated dots */
+        body {
             margin: 0;
-            background-color: #1F2937;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #111827; /* Dark grayish background */
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
-        .main-section {
-            background-color: #374151;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
-            opacity: 0;
-            transform: translateY(50px);
+        /* Animation for moving background dots */
+        .bg-dots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
         }
 
-        .button-group a {
+        .dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: moveDots 10s linear infinite;
+        }
+
+        @keyframes moveDots {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(100vw);
+            }
+        }
+
+        /* Main content styling */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 10rem auto; /* Added margin to prevent overlap with navbar */
+            padding: 3rem 2rem;
+            background-color: rgba(255, 255, 255, 0.1); /* Glassmorphism effect */
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: #e5e7eb;
+        }
+
+        p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: #d1d5db;
+        }
+
+        /* Button styling */
+        .btn {
+            display: inline-block;
             padding: 1rem 2rem;
+            margin: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
         }
 
-        #mobile-menu {
-            background-color: #2D3748;
-            color: white;
+        .btn:hover {
+            background-color: #2563eb;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            padding: 1rem;
+            z-index: 10;
+            background-color: rgba(17, 24, 39, 0.8); /* Semi-transparent */
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between; /* Align logo and links to the ends */
+            align-items: center; /* Center vertically */
+        }
+
+        .navbar a {
+            color: #ffffff;
+            margin-left: 1rem;
+            text-decoration: none;
+        }
+
+        /* Responsive design for mobile screens */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 0.75rem 1.5rem;
+            }
+
+            /* Hide links by default */
+            .navbar-links {
+                display: none;
+            }
+        }
+
+        /* Styles for the mobile menu */
+        .mobile-menu {
+            display: flex;
+            position: fixed;
+            top: 0;
+            right: -100%; /* Start off-screen from the right */
+            width: 75%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.9);
+            z-index: 30; /* Increased z-index to ensure visibility */
+            flex-direction: column;
+            justify-content: flex-start; /* Align items to the start */
+            align-items: center;
+            transition: right 0.3s ease; /* Smooth transition */
+            padding-top: 1rem; /* Padding for top space */
+        }
+
+        .mobile-menu.active {
+            right: 0; /* Move into view from the right */
+        }
+
+        .mobile-menu a {
+            margin: 1rem 0;
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+
+        #close-menu {
+            align-self: flex-end; /* Position close button at the top right */
+            margin-right: 1rem; /* Right margin */
+            font-size: 2rem; /* Increase font size */
+            color: #ffffff; /* Close button color */
+            background: none; /* No background */
+            border: none; /* No border */
+            cursor: pointer; /* Pointer cursor */
         }
     </style>
 </head>
 
-<body class="bg-gray-900 min-h-screen">
+<body>
+
     <!-- Navbar -->
-    <nav class="bg-gray-800 shadow-lg fixed w-full z-10">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <div class="text-xl font-bold text-purple-400">D Cube</div>
-
-                <!-- Hamburger Menu for small screens -->
-                <div class="block lg:hidden">
-                    <button id="menu-btn" class="text-white focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Full Menu for large screens -->
-                <div class="hidden lg:flex items-center space-x-6 ml-auto">
-                    <a href="/intro" class="text-white hover:text-red-500">Home</a>
-                    <a href="/about" class="text-white hover:text-red-500">About</a>
-                    <a href="/contact" class="text-white hover:text-red-500">Contact Us</a>
-                    <a href="/users/logout" class="text-red-400 hover:text-red-500">Logout</a>
-                </div>
-            </div>
+    <nav class="navbar">
+        <div class="flex items-center gsap1">
+            <span class="text-xl font-bold text-purple-400 mr-2">D Cube</span>
+            <img src="/images/logo.jpg" alt="D Cube Logo" class="w-10 h-10">
         </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden lg:hidden flex flex-col items-start space-y-4 p-4">
-            <button class="close-btn text-white" id="closeButton">&times;</button>
-            <a href="/intro">Home</a>
-            <a href="/about">About Us</a>
-            <a href="/contact">Contact Us</a>
-            <a href="/users/logout" class="text-red-400">Logout</a>
+        <div class="flex items-center">
+            <!-- Hamburger Icon -->
+            <button id="menu-toggle" class="md:hidden focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+            <div class=" navbar-links md:flex hidden">
+                <a class="gsap2" href="/intro">Home</a>
+                <a class="gsap2" href="/about">About</a>
+                <a class="gsap2" href="/contact">Contact</a>
+                <a class="gsap2" href="/logout" class="text-red-500">Logout</a>
+            </div>
         </div>
     </nav>
 
-    <div class="flex flex-col items-center justify-center min-h-screen pt-20">
-        <!-- Flash Messages -->
-        <% if (messages.error && messages.error.length > 0) { %>
-            <div class="w-full max-w-md bg-red-500 text-white p-4 rounded-lg shadow-md mb-4 fade-in">
-                <%= messages.error %>
-            </div>
-        <% } %>
-
-        <% if (messages.success && messages.success.length > 0) { %>
-            <div class="w-full max-w-md bg-green-500 text-white p-4 rounded-lg shadow-md mb-4 fade-in">
-                <%= messages.success %>
-            </div>
-        <% } %>
-
-        <!-- Main Section -->
-        <div class="main-section text-center">
-            <h2 class="text-2xl font-semibold text-white mb-6">Welcome to Your Wardrobe</h2>
-            <p class="text-lg mb-6 text-gray-300">Effortlessly organize your wardrobe and get personalized outfit recommendations for any occasion.</p>
-            <p class="text-base mb-6 text-gray-400">Need help deciding what to wear? Whether it's a special event or just another day, we've got you covered with smart wardrobe suggestions.</p>
-            <div class="button-group flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <a href="/add-clothes" class="bg-purple-500 hover:bg-purple-600 text-white rounded-lg shadow-md transition duration-300">Add Clothes to Wardrobe</a>
-                <a href="/get-outfits" class="bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-300">Get Outfit for Today</a>
-            </div>
-        </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu">
+        <button id="close-menu">✖</button>
+        <a href="/intro">Home</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/users/logout" class="text-red-500">Logout</a>
     </div>
 
-    <!-- GSAP Animations -->
+    <!-- Animated Background Dots -->
+    <div class="bg-dots"></div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <h1 class="gsap3">Welcome to Smart Wardrobe</h1>
+        <p class="gsap4">Organize your wardrobe efficiently and get personalized suggestions for your outfits. Start adding your clothes now!</p>
+        <a href="/clothes/add-clothes" class="btn">Add Clothes</a>
+        <a href="/clothes/get-outfits" class="btn">Get Outfits</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- JavaScript to create moving dots -->
     <script>
-        window.addEventListener("load", function () {
-            gsap.to(".main-section", { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" });
-            gsap.from(".fade-in", { opacity: 0, y: 50, duration: 1, stagger: 0.3 });
+        gsap.from(".gsap1",{
+            opacity:0,
+            y:-50,
+            duration:1
+        })
+        gsap.from(".gsap2",{
+            opacity:0,
+            y:-50,
+            duration:2,
+            stagger:0.2
+        })
+        gsap.from(".gsap3",{
+            opacity:0,
+            x:-70,
+            duration:2,
+            
+        })
+        gsap.from(".gsap4",{
+            opacity:0,
+            x:70,
+            duration:2,
+           
+        })
+        // Create multiple dots for the background
+        const dotCount = 100;
+        const bgDots = document.querySelector('.bg-dots');
 
-            const buttons = document.querySelectorAll('.button-group a');
-            buttons.forEach(button => {
-                button.addEventListener('mouseenter', () => {
-                    gsap.to(button, { scale: 1.1, duration: 0.3 });
-                });
-                button.addEventListener('mouseleave', () => {
-                    gsap.to(button, { scale: 1, duration: 0.3 });
-                });
-            });
+        for (let i = 0; i < dotCount; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            dot.style.top = Math.random() * 100 + 'vh';
+            dot.style.left = Math.random() * 100 + 'vw';
+            dot.style.animationDuration = Math.random() * 10 + 5 + 's';
+            bgDots.appendChild(dot);
+        }
 
-            document.getElementById('menu-btn').addEventListener('click', function () {
-                const menu = document.getElementById('mobile-menu');
-                if (menu.classList.contains('hidden')) {
-                    menu.classList.remove('hidden');
-                    gsap.fromTo(menu, { opacity: 0 }, { opacity: 1, duration: 0.5 });
-                } else {
-                    gsap.to(menu, { opacity: 0, duration: 0.5, onComplete: () => menu.classList.add('hidden') });
-                }
-            });
+        // JavaScript to handle menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenu = document.getElementById('close-menu');
 
-            // Close the mobile menu when the close button is clicked
-            document.getElementById('closeButton').addEventListener('click', function () {
-                const menu = document.getElementById('mobile-menu');
-                gsap.to(menu, { opacity: 0, duration: 0.5, onComplete: () => menu.classList.add('hidden') });
-            });
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active'); // Use 'active' class to slide in
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.remove('active'); // Remove 'active' to slide out
         });
     </script>
+
 </body>
 
 </html>

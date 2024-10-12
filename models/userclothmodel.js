@@ -6,17 +6,8 @@ const userClothSchema = mongoose.Schema({
         ref: 'User', // Reference to the User model
         required: true,
     },
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-        minLength: 1, // Minimum length for the clothing name
-    },
-    category: {
-        type: String,
-        required: true,
-        enum: ['Men', 'Women', 'Children'], // Limit to specified categories
-    },
+   
+   
     subcategory: {
         type: String,
         required: true,
@@ -41,6 +32,16 @@ const userClothSchema = mongoose.Schema({
         type: String,
         enum: ['Sunny', 'Rainy', 'Cold'],
         default: 'Sunny',
+    },
+    size: {
+        type: String,
+        required: true,
+         // Limit to specified sizes
+    },
+    gender: {
+        type: String,
+        required: true,
+         // Limit to specified genders
     },
     image: {
         type: String, // Store the image URL after upload to Firebase

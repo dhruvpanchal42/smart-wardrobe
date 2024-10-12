@@ -105,34 +105,39 @@
 
         /* Ensure Clear Filters button is responsive */
         .clear-filters {
-            @apply bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto; /* Use full width on small screens and auto width on larger screens */
+            @apply bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto;
+            /* Use full width on small screens and auto width on larger screens */
         }
     </style>
 </head>
 
 <body class="bg-gray-900 min-h-screen flex flex-col">
     <nav class="bg-gray-800 text-white p-4 flex justify-between items-center">
-        <div class="flex items-center">
-            <span class="text-xl font-bold text-purple-400 mr-2">D Cube</span>
-            <img src="/images/logo.jpg" alt="D Cube Logo" class="w-10 h-10">
+        <div class=" flex items-center gsap1">
+            <span class=" text-xl font-bold text-purple-400 mr-2">D Cube</span>
+            <img  src="/images/logo.jpg" alt="D Cube Logo" class="w-10 h-10">
         </div>
 
         <div class="hidden lg:flex items-center space-x-6 ml-auto">
-            <a href="/intro" class="text-white-400 hover:text-red-500">Home</a>
-            <a href="/intro" class="text-white-400 hover:text-red-500">About</a>
-            <a href="/intro" class="text-white-400 hover:text-red-500">Contact us</a>
-            <a href="/users/logout" class="text-red-400 hover:text-red-500">Logout</a>
+            <a href="/intro" class=" gsap2 text-white-400 hover:text-red-500">Home</a>
+            <a href="/intro" class=" gsap2 text-white-400 hover:text-red-500">About</a>
+            <a href="/intro" class=" gsap2 text-white-400 hover:text-red-500">Contact us</a>
+            <a href="/users/logout" class=" gsap2 text-red-400 hover:text-red-500">Logout</a>
         </div>
 
         <div class="md:hidden">
             <button id="menuButton" class="focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
                 </svg>
             </button>
         </div>
     </nav>
-
+    <span class="mt-4 ml-2 relative">
+        <a class="bg-blue-500 px-4 py-2 rounded-lg text-white" href="/intro">Back</a>
+    </span>
     <div id="mobile-menu">
         <button class="close-btn" id="closeButton">&times;</button>
         <a href="/intro">Home</a>
@@ -141,90 +146,142 @@
         <a href="/users/logout" class="text-red-400">Logout</a>
     </div>
 
+
     <div class="bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-6xl w-full mx-auto mt-4">
         <h2 class="text-2xl font-bold mb-6 text-center">Your Wardrobe</h2>
 
-        <% if (clothes.length === 0) { %>
+        <% if (clothes.length===0) { %>
             <p class="text-center">Your wardrobe is empty. Add some clothes!</p>
-        <% } else { %>
-            <div class="filter-section mb-6">
-                <form action="/clothes/wardrobe" method="GET" class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
-                    <div>
-                        <label for="occasion" class="block text-white">Occasion:</label>
-                        <select id="occasion" name="occasion" class="w-full">
-                            <option value="" <%= occasion === '' ? 'selected' : '' %>>All</option>
-                            <option value="Casual" <%= occasion === 'Casual' ? 'selected' : '' %>>Casual</option>
-                            <option value="Formal" <%= occasion === 'Formal' ? 'selected' : '' %>>Formal</option>
-                            <option value="Party" <%= occasion === 'Party' ? 'selected' : '' %>>Party</option>
-                            <option value="Sports" <%= occasion === 'Sports' ? 'selected' : '' %>>Sports</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="weather" class="block text-white">Weather:</label>
-                        <select id="weather" name="weather" class="w-full">
-                            <option value="" <%= weather === '' ? 'selected' : '' %>>All</option>
-                            <option value="Sunny" <%= weather === 'Sunny' ? 'selected' : '' %>>Sunny</option>
-                            <option value="Rainy" <%= weather === 'Rainy' ? 'selected' : '' %>>Rainy</option>
-                            <option value="Cold" <%= weather === 'Cold' ? 'selected' : '' %>>Cold</option>
-                            <option value="Windy" <%= weather === 'Windy' ? 'selected' : '' %>>Windy</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="subcategory" class="block text-white">Subcategory:</label>
-                        <select id="subcategory" name="subcategory" class="w-full">
-                            <option value="" <%= subcategory === '' ? 'selected' : '' %>>All</option>
-                            <option value="Shirts" <%= subcategory === 'Shirts' ? 'selected' : '' %>>Shirts</option>
-                            <option value="Pants" <%= subcategory === 'Pants' ? 'selected' : '' %>>Pants</option>
-                            <option value="Jackets" <%= subcategory === 'Jackets' ? 'selected' : '' %>>Jackets</option>
-                            <option value="Dresses" <%= subcategory === 'Dresses' ? 'selected' : '' %>>Dresses</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="color" class="block text-white">Color:</label>
-                        <select id="color" name="color" class="w-full">
-                            <option value="" <%= color === '' ? 'selected' : '' %>>All</option>
-                            <option value="Red" <%= color === 'Red' ? 'selected' : '' %>>Red</option>
-                            <option value="Blue" <%= color === 'Blue' ? 'selected' : '' %>>Blue</option>
-                            <option value="Green" <%= color === 'Green' ? 'selected' : '' %>>Green</option>
-                            <option value="Black" <%= color === 'Black' ? 'selected' : '' %>>Black</option>
-                            <option value="White" <%= color === 'White' ? 'selected' : '' %>>White</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="fabric" class="block text-white">Fabric Type:</label>
-                        <select id="fabric" name="fabric" class="w-full">
-                            <option value="" <%= fabric === '' ? 'selected' : '' %>>All</option>
-                            <option value="Cotton" <%= fabric === 'Cotton' ? 'selected' : '' %>>Cotton</option>
-                            <option value="Wool" <%= fabric === 'Wool' ? 'selected' : '' %>>Wool</option>
-                            <option value="Polyester" <%= fabric === 'Polyester' ? 'selected' : '' %>>Polyester</option>
-                            <option value="Silk" <%= fabric === 'Silk' ? 'selected' : '' %>>Silk</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center justify-center">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white mt-6 font-bold py-2 px-4 rounded w-full">Filter</button>
-                    </div>
-                </form>
-                <button id="clearFilters" class="clear-filters mt-4">Clear Filters</button>
-            </div>
+            <% } else { %>
+                <div class="filter-section mb-6">
+                    <form action="/clothes/get-outfits" method="GET"
+                        class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div>
+                            <label for="gender" class="block text-white">Gender:</label>
+                            <select id="gender" name="gender" class="w-full">
+                                <option value="" <%=gender==='' ? 'selected' : '' %>>All</option>
+                                <option value="Male" <%=gender==='Male' ? 'selected' : '' %>>Male</option>
+                                <option value="Female" <%=gender==='Female' ? 'selected' : '' %>>Female</option>
+                                
+                            </select>
+                        </div>
+                        <div>
+                            <label for="size" class="block text-white">Size:</label>
+                            <select id="size" name="size" class="w-full">
+                                <option value="" <%=size==='' ? 'selected' : '' %>>All</option>
+                                <option value="Small" <%=size==='Small' ? 'selected' : '' %>>Small</option>
+                                <option value="Medium" <%=size==='Medium' ? 'selected' : '' %>>Medium</option>
+                                <option value="Large" <%=size==='Large' ? 'selected' : '' %>>Large</option>
+                                <option value="Extra Large" <%=size==='Extra Large' ? 'selected' : '' %>>Extra Large</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="occasion" class="block text-white">Occasion:</label>
+                            <select id="occasion" name="occasion" class="w-full">
+                                <option value="" <%=occasion==='' ? 'selected' : '' %>>All</option>
+                                <option value="Casual" <%=occasion==='Casual' ? 'selected' : '' %>>Casual</option>
+                                <option value="Formal" <%=occasion==='Formal' ? 'selected' : '' %>>Formal</option>
+                                <option value="Party" <%=occasion==='Party' ? 'selected' : '' %>>Party</option>
+                                <option value="Sports" <%=occasion==='Sports' ? 'selected' : '' %>>Sports</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="weather" class="block text-white">Weather:</label>
+                            <select id="weather" name="weather" class="w-full">
+                                <option value="" <%=weather==='' ? 'selected' : '' %>>All</option>
+                                <option value="Sunny" <%=weather==='Sunny' ? 'selected' : '' %>>Sunny</option>
+                                <option value="Rainy" <%=weather==='Rainy' ? 'selected' : '' %>>Rainy</option>
+                                <option value="Cold" <%=weather==='Cold' ? 'selected' : '' %>>Cold</option>
 
-            <div class="wardrobe-container">
-                <% clothes.forEach(cloth => { %>
-                    <div class="clothing-item">
-                        <img src="<%= cloth.image %>" alt="<%= cloth.name %>" />
-                        <h3 class="text-lg font-semibold mt-2"><%= cloth.name %></h3>
-                        <p class="text-sm">Category: <%= cloth.category %></p>
-                        <p class="text-sm">Subcategory: <%= cloth.subcategory %></p>
-                        <p class="text-sm">Color: <%= cloth.color %></p>
-                        <p class="text-sm">Fabric: <%= cloth.fabric %></p>
-                        <p class="text-sm">Occasion: <%= cloth.occasion %></p>
-                        <p class="text-sm">Weather: <%= cloth.weather %></p>
-                    </div>
-                <% }); %>
-            </div>
-        <% } %>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="subcategory" class="block text-white">Subcategory:</label>
+                            <select id="subcategory" name="subcategory" class="w-full">
+                                <option value="" <%=subcategory==='' ? 'selected' : '' %>>All</option>
+                                <option value="Shirt" <%=subcategory==='Shirt' ? 'selected' : '' %>>Shirt</option>
+                                <option value="Pant" <%=subcategory==='Pant' ? 'selected' : '' %>>Pant</option>
+                                <option value="Jacket" <%=subcategory==='Jacket' ? 'selected' : '' %>>Jacket</option>
+                                <option value="Dress" <%=subcategory==='Dress' ? 'selected' : '' %>>Dress</option>
+                                <option value="Top" <%=subcategory==='Top' ? 'selected' : '' %>>Top</option>
+                                <option value="Skirt" <%=subcategory==='Skirt' ? 'selected' : '' %>>Skirt</option>
+                                <option value="T-Shirt" <%=subcategory==='T-Shirt' ? 'selected' : '' %>>T-Shirt</option>
+                                <option value="Short" <%=subcategory==='Short' ? 'selected' : '' %>>Short</option>
+                                <option value="Jeans" <%=subcategory==='Jeans' ? 'selected' : '' %>>Jeans</option>
+
+                            </select>
+                        </div>
+                        <div>
+                            <label for="color" class="block text-white">Color:</label>
+                            <select id="color" name="color" class="w-full">
+                                <option value="" <%=color==='' ? 'selected' : '' %>>All</option>
+                                <option value="Red" <%=color==='Red' ? 'selected' : '' %>>Red</option>
+                                <option value="Blue" <%=color==='Blue' ? 'selected' : '' %>>Blue</option>
+                                <option value="Green" <%=color==='Green' ? 'selected' : '' %>>Green</option>
+                                <option value="Black" <%=color==='Black' ? 'selected' : '' %>>Black</option>
+                                <option value="White" <%=color==='White' ? 'selected' : '' %>>White</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="fabric" class="block text-white">Fabric Type:</label>
+                            <select id="fabric" name="fabric" class="w-full">
+                                <option value="" <%=fabric==='' ? 'selected' : '' %>>All</option>
+                                <option value="Cotton" <%=fabric==='Cotton' ? 'selected' : '' %>>Cotton</option>
+                                <option value="Wool" <%=fabric==='Wool' ? 'selected' : '' %>>Wool</option>
+                                <option value="Polyester" <%=fabric==='Polyester' ? 'selected' : '' %>>Polyester
+                                </option>
+                                <option value="Silk" <%=fabric==='Silk' ? 'selected' : '' %>>Silk</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <button type="submit"
+                                class="bg-blue-500 hover:bg-blue-600 text-white mt-6 font-bold py-2 px-4 rounded w-full">Filter</button>
+                        </div>
+                    </form>
+                    <button id="clearFilters" class="clear-filters mt-4">Clear Filters</button>
+                </div>
+
+                <div class="wardrobe-container">
+                    <% clothes.forEach(cloth=> { %>
+                        <div class="clothing-item">
+                            <img src="<%= cloth.image %>" alt="<%= cloth.name %>" />
+                            <h3 class="text-lg font-semibold mt-2">
+                                <%= cloth.name %>
+                            </h3>
+                            <p class="text-sm">Gender: <%= cloth.gender %>
+                            </p>
+                            <p class="text-sm">Size: <%= cloth.size %>
+                            </p>
+                            <p class="text-sm">Subcategory: <%= cloth.subcategory %>
+                            </p>
+                            <p class="text-sm">Color: <%= cloth.color %>
+                            </p>
+                            <p class="text-sm">Fabric: <%= cloth.fabric %>
+                            </p>
+                            <p class="text-sm">Occasion: <%= cloth.occasion %>
+                            </p>
+                            <p class="text-sm">Weather: <%= cloth.weather %>
+                            </p>
+                        </div>
+                        <% }); %>
+                </div>
+                <% } %>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <script>
+        gsap.from(".gsap1",{
+            opacity:0,
+            y:-40,
+            duration:1,
+           
+        })
+        gsap.from(".gsap2",{
+            opacity:0,
+            y:-40,
+            duration:1,
+            stagger:0.2
+        })
         document.getElementById('menuButton').onclick = function () {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('show');
