@@ -8,38 +8,52 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #1F2937;
+            background-color: #FAD0C9FF;
+        }
+
+        /* .inner{
+            background-color: #101820ff;
+        } */
+        .navi {
+            background-color: #101820FF;
         }
 
         .clothing-item {
-            background-color: #2D3748;
+            background-color: #101820ff;
             padding: 1rem;
             border-radius: 0.5rem;
             margin-bottom: 1rem;
             transition: transform 0.2s;
             border: 1px solid #4A5568;
-            height: 100%;
+            height: auto;
+            /* Allow the height to adjust based on content */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+        }
+
+        .clothing-item img {
+            max-width: 100%;
+            height: 150px;
+            /* Specify a fixed height or adjust as needed */
+            object-fit: cover;
+            /* Ensures the image covers the area without distortion */
+            border-radius: 0.5rem;
         }
 
         .clothing-item:hover {
             transform: scale(1.05);
         }
 
-        .clothing-item img {
-            max-width: 100%;
-            border-radius: 0.5rem;
-            height: auto;
-            object-fit: cover;
-        }
 
         .wardrobe-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 1rem;
+            padding: 1rem;
+            /* Add padding to prevent image cutoff */
         }
+
 
         @media (min-width: 640px) {
             .wardrobe-container {
@@ -111,11 +125,11 @@
     </style>
 </head>
 
-<body class="bg-gray-900 min-h-screen flex flex-col">
-    <nav class="bg-gray-800 text-white p-4 flex justify-between items-center">
+<body class=" min-h-screen flex flex-col">
+    <nav class="navi text-white p-4 flex justify-between items-center">
         <div class=" flex items-center gsap1">
             <span class=" text-xl font-bold text-purple-400 mr-2">D Cube</span>
-            <img  src="/images/logo.jpg" alt="D Cube Logo" class="w-10 h-10">
+            <img src="/images/logo.jpg" alt="D Cube Logo" class="w-10 h-10">
         </div>
 
         <div class="hidden lg:flex items-center space-x-6 ml-auto">
@@ -147,36 +161,54 @@
     </div>
 
 
-    <div class="bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-6xl w-full mx-auto mt-4">
-        <h2 class="text-2xl font-bold mb-6 text-center">Your Wardrobe</h2>
+    <div class="inner text-white p-8 rounded-lg shadow-lg max-w-6xl w-full mx-auto mt-4">
+        <h2 class="text-2xl text-black font-bold mb-6 text-center">Your Wardrobe</h2>
+        <div class="filter-section mb-6 text-black">
+            <h3 class="text-lg font-bold mb-4">Check Weather and Clothing Suggestions</h3>
+            <!-- Weather Form -->
+            <form id="weatherForm" class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
+                <input type="text" id="location" placeholder="Enter Location"
+                    class="w-full p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                    Get Weather
+                </button>
+            </form>
+            
+
+            <!-- Weather Results -->
+            <div id="weatherResult" class="mt-4 text-black bg-gray-100 p-4 rounded shadow-lg">
+                <p>Enter a location to see weather information.</p>
+            </div>
+        </div>
 
         <% if (clothes.length===0) { %>
             <p class="text-center">Your wardrobe is empty. Add some clothes!</p>
             <% } else { %>
-                <div class="filter-section mb-6">
+                <div class="filter-section mb-6 text-black">
                     <form action="/clothes/get-outfits" method="GET"
                         class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
                         <div>
-                            <label for="gender" class="block text-white">Gender:</label>
+                            <label for="gender" class="block text-black">Gender:</label>
                             <select id="gender" name="gender" class="w-full">
                                 <option value="" <%=gender==='' ? 'selected' : '' %>>All</option>
                                 <option value="Male" <%=gender==='Male' ? 'selected' : '' %>>Male</option>
                                 <option value="Female" <%=gender==='Female' ? 'selected' : '' %>>Female</option>
-                                
+
                             </select>
                         </div>
                         <div>
-                            <label for="size" class="block text-white">Size:</label>
+                            <label for="size" class="block text-black">Size:</label>
                             <select id="size" name="size" class="w-full">
                                 <option value="" <%=size==='' ? 'selected' : '' %>>All</option>
                                 <option value="Small" <%=size==='Small' ? 'selected' : '' %>>Small</option>
                                 <option value="Medium" <%=size==='Medium' ? 'selected' : '' %>>Medium</option>
                                 <option value="Large" <%=size==='Large' ? 'selected' : '' %>>Large</option>
-                                <option value="Extra Large" <%=size==='Extra Large' ? 'selected' : '' %>>Extra Large</option>
+                                <option value="Extra Large" <%=size==='Extra Large' ? 'selected' : '' %>>Extra Large
+                                </option>
                             </select>
                         </div>
                         <div>
-                            <label for="occasion" class="block text-white">Occasion:</label>
+                            <label for="occasion" class="block text-black">Occasion:</label>
                             <select id="occasion" name="occasion" class="w-full">
                                 <option value="" <%=occasion==='' ? 'selected' : '' %>>All</option>
                                 <option value="Casual" <%=occasion==='Casual' ? 'selected' : '' %>>Casual</option>
@@ -186,7 +218,7 @@
                             </select>
                         </div>
                         <div>
-                            <label for="weather" class="block text-white">Weather:</label>
+                            <label for="weather" class="block text-black">Weather:</label>
                             <select id="weather" name="weather" class="w-full">
                                 <option value="" <%=weather==='' ? 'selected' : '' %>>All</option>
                                 <option value="Sunny" <%=weather==='Sunny' ? 'selected' : '' %>>Sunny</option>
@@ -196,7 +228,7 @@
                             </select>
                         </div>
                         <div>
-                            <label for="subcategory" class="block text-white">Subcategory:</label>
+                            <label for="subcategory" class="block text-black">Subcategory:</label>
                             <select id="subcategory" name="subcategory" class="w-full">
                                 <option value="" <%=subcategory==='' ? 'selected' : '' %>>All</option>
                                 <option value="Shirt" <%=subcategory==='Shirt' ? 'selected' : '' %>>Shirt</option>
@@ -212,7 +244,7 @@
                             </select>
                         </div>
                         <div>
-                            <label for="color" class="block text-white">Color:</label>
+                            <label for="color" class="block text-black">Color:</label>
                             <select id="color" name="color" class="w-full">
                                 <option value="" <%=color==='' ? 'selected' : '' %>>All</option>
                                 <option value="Red" <%=color==='Red' ? 'selected' : '' %>>Red</option>
@@ -223,7 +255,7 @@
                             </select>
                         </div>
                         <div>
-                            <label for="fabric" class="block text-white">Fabric Type:</label>
+                            <label for="fabric" class="block text-black">Fabric Type:</label>
                             <select id="fabric" name="fabric" class="w-full">
                                 <option value="" <%=fabric==='' ? 'selected' : '' %>>All</option>
                                 <option value="Cotton" <%=fabric==='Cotton' ? 'selected' : '' %>>Cotton</option>
@@ -270,17 +302,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <script>
-        gsap.from(".gsap1",{
-            opacity:0,
-            y:-40,
-            duration:1,
-           
+        document.getElementById('weatherForm').addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+    
+    const location = document.getElementById('location').value.trim();
+    
+    // Validate the location input
+    if (!location) {
+        document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">Please enter a valid location.</p>`;
+        return;
+    }
+
+    try {
+        // Show loading message
+        document.getElementById('weatherResult').innerHTML = `<p>Loading weather data...</p>`;
+
+        const response = await fetch('/api/weather', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ location }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">${data.error}</p>`;
+            return;
+        }
+
+        const weatherHtml = `
+            <h4 class="font-bold text-xl">Weather in ${data.location}</h4>
+            <p><strong>Temperature:</strong> ${data.temperature}°C</p>
+            <p><strong>Condition:</strong> ${data.weatherDescription}</p>
+            <p><strong>Suggestion:</strong> ${data.clothingSuggestion}</p>
+        `;
+        document.getElementById('weatherResult').innerHTML = weatherHtml;
+    } catch (error) {
+        document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">Error fetching weather data.</p>`;
+    }
+});
+
+
+        gsap.from(".gsap1", {
+            opacity: 0,
+            y: -40,
+            duration: 1,
+
         })
-        gsap.from(".gsap2",{
-            opacity:0,
-            y:-40,
-            duration:1,
-            stagger:0.2
+        gsap.from(".gsap2", {
+            opacity: 0,
+            y: -40,
+            duration: 1,
+            stagger: 0.2
         })
         document.getElementById('menuButton').onclick = function () {
             const mobileMenu = document.getElementById('mobile-menu');

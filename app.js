@@ -12,6 +12,8 @@ const clothRouter = require('./routes/clothRouter')
 const connectDB = require('./config/mongoose-connection');
 const admin = require('firebase-admin');
 const app = express();
+const cors = require('cors'); // If you're working with CORS
+const weatherRoute = require('./routes/weather');
 
 
 // Middlewares
@@ -38,6 +40,7 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/users', userRouter);
 app.use('/clothes', clothRouter);
+app.use(weatherRoute);
 
 
 

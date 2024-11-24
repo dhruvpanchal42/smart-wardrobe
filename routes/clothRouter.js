@@ -93,7 +93,7 @@ router.post('/add-clothes', isLoggedIn, upload.single('image'), [
 });
 
 // Route to render the add clothes page
-router.get('/add-clothes', (req, res) => {
+router.get('/add-clothes',isLoggedIn, (req, res) => {
     // Get flash messages from session
     const error = req.flash('error');
     const success = req.flash('success');
@@ -106,6 +106,8 @@ router.get("/successpage",(req,res)=>{
 
 // Route to get outfits based on filters
 router.get('/get-outfits', isLoggedIn, async (req, res) => {
+    const location = req.query.location;
+    const apiKey = process.env.WEATHER_API_KEY;
     const userId = req.user._id; // Get the logged-in user's ID
 
     // Get the filter values from the query parameters
@@ -126,9 +128,10 @@ router.get('/get-outfits', isLoggedIn, async (req, res) => {
 
     try {
         const clothes = await UserCloth.find(filterConditions); // Fetch clothes based on filters
-
+        
         // Render the view and pass the necessary variables
         res.render('get-outfits', {
+           
             clothes,
             occasion,
             weather,
