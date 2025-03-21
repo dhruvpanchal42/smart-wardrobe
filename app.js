@@ -14,6 +14,8 @@ const admin = require('firebase-admin');
 const app = express();
 const cors = require('cors'); // If you're working with CORS
 const weatherRoute = require('./routes/weather');
+const geminiRoutes = require('./routes/gemini')
+const forgotPasswordRoutes = require('./routes/forgotPassword');
 
 
 // Middlewares
@@ -39,8 +41,10 @@ app.use(passport.session());
 // Define routes
 app.use('/', indexRouter);
 app.use('/users', userRouter);
+app.use('/users', forgotPasswordRoutes);
 app.use('/clothes', clothRouter);
 app.use(weatherRoute);
+app.use('/api/gemini', geminiRoutes);
 
 
 

@@ -19,6 +19,12 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false, // Default is false for non-OAuth users
     },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 module.exports = mongoose.model("User", userSchema);

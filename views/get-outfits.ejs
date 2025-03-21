@@ -173,16 +173,32 @@
                     Get Weather
                 </button>
             </form>
-            
+
 
             <!-- Weather Results -->
             <div id="weatherResult" class="mt-4 text-black bg-gray-100 p-4 rounded shadow-lg">
                 <p>Enter a location to see weather information.</p>
             </div>
         </div>
+        <div class="p-4 text-black">
+            <form id="gemini-form" class="space-y-4">
+                <div class="mb-4">
+                    <label for="prompt" class="block text-sm font-medium text-gray-700 mb-2">Ask Gemini for Outfit Advice</label>
+                    <textarea id="prompt" placeholder="Example: What should I wear for a formal dinner tonight? Or: Suggest an outfit for a sunny day at the beach."
+                        class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">
+                    Get Personalized Outfit Advice
+                </button>
+            </form>
+            <div id="description" class="mt-4 p-4 bg-gray-100 rounded hidden">
+                <h3 class="text-lg font-semibold mb-2">Gemini's Recommendation:</h3>
+                <p id="description-text" class="text-gray-700"></p>
+            </div>
+        </div>
 
         <% if (clothes.length===0) { %>
-            <p class="text-center">Your wardrobe is empty. Add some clothes!</p>
+            <p class="text-center text-black">Your wardrobe is empty. Add some clothes!</p>
             <% } else { %>
                 <div class="filter-section mb-6 text-black">
                     <form action="/clothes/get-outfits" method="GET"
@@ -302,45 +318,85 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <script>
-        document.getElementById('weatherForm').addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent the default form submission behavior
-    
-    const location = document.getElementById('location').value.trim();
-    
-    // Validate the location input
-    if (!location) {
-        document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">Please enter a valid location.</p>`;
-        return;
-    }
+        const form = document.getElementById('gemini-form');
+        const descriptionDiv = document.getElementById('description');
+        const descriptionText = document.getElementById('description-text');
 
-    try {
-        // Show loading message
-        document.getElementById('weatherResult').innerHTML = `<p>Loading weather data...</p>`;
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+            
+            // Show loading state
+            descriptionText.textContent = 'Getting personalized recommendation...';
+            descriptionDiv.classList.remove('hidden');
 
-        const response = await fetch('/api/weather', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ location }),
+            try {
+                const response = await fetch('/api/gemini/generate-description', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    descriptionText.textContent = data.description;
+                } else {
+                    let errorMessage = 'Error: ' + data.message;
+                    if (data.error) {
+                        errorMessage += '\n' + data.error;
+                    }
+                    if (data.details) {
+                        console.error('Detailed error:', data.details);
+                    }
+                    descriptionText.textContent = errorMessage;
+                }
+            } catch (error) {
+                console.error('Network or other error:', error);
+                descriptionText.textContent = 'Error: Failed to connect to the server. Please check your internet connection and try again.';
+            }
         });
+        document.getElementById('weatherForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission behavior
 
-        const data = await response.json();
+            const location = document.getElementById('location').value.trim();
 
-        if (!response.ok) {
-            document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">${data.error}</p>`;
-            return;
-        }
+            // Validate the location input
+            if (!location) {
+                document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">Please enter a valid location.</p>`;
+                return;
+            }
 
-        const weatherHtml = `
+            try {
+                // Show loading message
+                document.getElementById('weatherResult').innerHTML = `<p>Loading weather data...</p>`;
+
+                const response = await fetch('/api/weather', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ location }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">${data.error}</p>`;
+                    return;
+                }
+
+                const weatherHtml = `
             <h4 class="font-bold text-xl">Weather in ${data.location}</h4>
             <p><strong>Temperature:</strong> ${data.temperature}°C</p>
             <p><strong>Condition:</strong> ${data.weatherDescription}</p>
             <p><strong>Suggestion:</strong> ${data.clothingSuggestion}</p>
         `;
-        document.getElementById('weatherResult').innerHTML = weatherHtml;
-    } catch (error) {
-        document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">Error fetching weather data.</p>`;
-    }
-});
+                document.getElementById('weatherResult').innerHTML = weatherHtml;
+            } catch (error) {
+                document.getElementById('weatherResult').innerHTML = `<p class="text-red-500">Error fetching weather data.</p>`;
+            }
+        });
 
 
         gsap.from(".gsap1", {
