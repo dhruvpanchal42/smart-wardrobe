@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Wardrobe - ESP32 Monitor</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FAD0C9FF;
+        }
+        .navi {
+            background-color: #101820FF;
+        }
+        .card {
+            background-color: #101820FF;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.02);
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online {
+            background-color: #10B981;
+            box-shadow: 0 0 8px #10B981;
+        }
+        .status-offline {
+            background-color: #EF4444;
+            box-shadow: 0 0 8px #EF4444;
+        }
+        @media (max-width: 640px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Include the navbar -->
+    <%- include('partials/navbar') %>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Connection Status -->
+        <div class="flex items-center justify-center mb-6">
+            <div class="card p-4 rounded-lg shadow-lg inline-flex items-center">
+                <span id="statusIndicator" class="status-indicator status-offline"></span>
+                <span id="connectionStatus" class="text-gray-300">Checking connection...</span>
+            </div>
+        </div>
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">ESP32 Sensor Monitor</h1>
+
+        <!-- Error Alert -->
+        <div id="errorAlert" class="hidden bg-red-500 text-white p-4 rounded-lg mb-6 text-center">
+            ESP32 is disconnected. Please check:
+            <ul class="list-disc list-inside mt-2 text-left">
+                <li>ESP32 is powered on</li>
+                <li>ESP32 is connected to WiFi</li>
+                <li>Your computer's IP address is correct in ESP32 code</li>
+            </ul>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- ESP32 Data Cards -->
+            <div class="card p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl text-red-500 mb-3">Test Data</h3>
+                <p class="text-gray-300" id="testData"><%= sensorData.test %></p>
+            </div>
+            
+            <div class="card p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl text-red-500 mb-3">Counter</h3>
+                <p class="text-gray-300" id="counter"><%= sensorData.counter %></p>
+            </div>
+            
+            <div class="card p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl text-red-500 mb-3">WiFi Strength</h3>
+                <p class="text-gray-300" id="wifiStrength"><%= sensorData.wifi_strength %> dBm</p>
+            </div>
+            
+            <div class="card p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl text-red-500 mb-3">Last Update</h3>
+                <p class="text-gray-300" id="lastUpdate"><%= sensorData.lastUpdate %></p>
+            </div>
+        </div>
+
+        <!-- Debug Log Section -->
+        <div class="card p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl text-red-500 mb-3">Debug Log</h3>
+            <div id="debugLog" class="text-gray-300 font-mono text-sm h-48 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        let lastUpdateTime = Date.now();
+        let connectionTimeout;
+        const CONNECTION_TIMEOUT = 5000; // 5 seconds timeout
+
+        function updateConnectionStatus(isConnected) {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const errorAlert = document.getElementById('errorAlert');
+
+            if (isConnected) {
+                statusIndicator.classList.remove('status-offline');
+                statusIndicator.classList.add('status-online');
+                connectionStatus.textContent = 'ESP32 Connected';
+                errorAlert.classList.add('hidden');
+            } else {
+                statusIndicator.classList.remove('status-online');
+                statusIndicator.classList.add('status-offline');
+                connectionStatus.textContent = 'ESP32 Disconnected';
+                errorAlert.classList.remove('hidden');
+            }
+        }
+
+        function checkConnection() {
+            const timeSinceLastUpdate = Date.now() - lastUpdateTime;
+            updateConnectionStatus(timeSinceLastUpdate < CONNECTION_TIMEOUT);
+        }
+
+        // Function to update the ESP32 data
+        function updateESP32Data() {
+            fetch('/esp32/data')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('ESP32 disconnected');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('testData').textContent = data.test;
+                    document.getElementById('counter').textContent = data.counter;
+                    document.getElementById('wifiStrength').textContent = data.wifi_strength + ' dBm';
+                    document.getElementById('lastUpdate').textContent = data.lastUpdate;
+
+                    // Update connection status
+                    lastUpdateTime = Date.now();
+                    updateConnectionStatus(true);
+
+                    // Add to debug log
+                    const debugLog = document.getElementById('debugLog');
+                    const logEntry = document.createElement('div');
+                    logEntry.textContent = `[${new Date().toLocaleTimeString()}] Data updated: Counter=${data.counter}, WiFi=${data.wifi_strength}dBm`;
+                    debugLog.insertBefore(logEntry, debugLog.firstChild);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    updateConnectionStatus(false);
+                    
+                    // Clear data when disconnected
+                    document.getElementById('testData').textContent = 'No data available';
+                    document.getElementById('counter').textContent = 'N/A';
+                    document.getElementById('wifiStrength').textContent = 'N/A';
+                    document.getElementById('lastUpdate').textContent = 'Never';
+
+                    // Add to debug log
+                    const debugLog = document.getElementById('debugLog');
+                    const logEntry = document.createElement('div');
+                    logEntry.textContent = `[${new Date().toLocaleTimeString()}] Error: ESP32 disconnected`;
+                    logEntry.style.color = '#EF4444'; // Red color for error
+                    debugLog.insertBefore(logEntry, debugLog.firstChild);
+                });
+        }
+
+        // Update data and check connection every second
+        setInterval(updateESP32Data, 1000);
+        setInterval(checkConnection, 1000);
+
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuButton = document.getElementById('menuButton');
+            const closeButton = document.getElementById('closeButton');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuButton?.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+                mobileMenu.classList.remove('hidden');
+            });
+
+            closeButton?.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 300);
+            });
+
+            // GSAP animations
+            gsap.from(".card", {
+                opacity: 0,
+                y: 20,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
+        });
+    </script>
+</body>
+</html> 

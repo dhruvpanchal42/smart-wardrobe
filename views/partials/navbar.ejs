@@ -1,0 +1,35 @@
+<!-- Navigation Bar -->
+<nav class="navi text-white p-4 flex justify-between items-center">
+    <div class="flex items-center gsap1">
+        <span class="text-xl font-bold text-purple-400 mr-2">D Cube</span>
+        <img src="/images/logo.jpg" alt="D Cube Logo" class="w-10 h-10">
+    </div>
+
+    <div class="hidden lg:flex items-center space-x-6 ml-auto">
+        <a href="/intro" class="gsap2 text-white-400 hover:text-red-500">Home</a>
+        <a href="/clothes/add-clothes" class="gsap2 text-white-400 hover:text-red-500">Add Clothes</a>
+        <a href="/clothes/get-outfits" class="gsap2 text-white-400 hover:text-red-500">Get Outfits</a>
+        <a href="/esp32/monitor" class="gsap2 text-white-400 hover:text-red-500">ESP32 Monitor</a>
+        <a href="/users/logout" class="gsap2 text-red-400 hover:text-red-500">Logout</a>
+    </div>
+
+    <div class="lg:hidden">
+        <button id="menuButton" class="focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+    </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="hidden lg:hidden fixed top-0 right-0 w-64 h-full bg-gray-800 z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+    <button id="closeButton" class="absolute top-4 right-4 text-white text-2xl">&times;</button>
+    <div class="flex flex-col space-y-4 mt-16 p-4">
+        <a href="/intro" class="text-white hover:text-red-500">Home</a>
+        <a href="/clothes/add-clothes" class="text-white hover:text-red-500">Add Clothes</a>
+        <a href="/clothes/get-outfits" class="text-white hover:text-red-500">Get Outfits</a>
+        <a href="/esp32/monitor" class="text-white hover:text-red-500">ESP32 Monitor</a>
+        <a href="/users/logout" class="text-red-400 hover:text-red-500">Logout</a>
+    </div>
+</div> 

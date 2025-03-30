@@ -1,0 +1,44 @@
+<!-- ... existing code ... -->
+<!-- Add this where you want to display the ESP32 data -->
+<div id="esp32-section" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <!-- ESP32 Data Cards -->
+    <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+        <h3 class="text-xl text-red-500 mb-2">Test Data</h3>
+        <p class="text-gray-300" id="testData"><%= sensorData.test %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+        <h3 class="text-xl text-red-500 mb-2">Counter</h3>
+        <p class="text-gray-300" id="counter"><%= sensorData.counter %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+        <h3 class="text-xl text-red-500 mb-2">WiFi Strength</h3>
+        <p class="text-gray-300" id="wifiStrength"><%= sensorData.wifi_strength %> dBm</p>
+    </div>
+    
+    <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+        <h3 class="text-xl text-red-500 mb-2">Last Update</h3>
+        <p class="text-gray-300" id="lastUpdate"><%= sensorData.lastUpdate %></p>
+    </div>
+</div>
+
+<!-- Add this script before the closing body tag -->
+<script>
+    // Function to update the ESP32 data
+    function updateESP32Data() {
+        fetch('/esp32data')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('testData').textContent = data.test;
+                document.getElementById('counter').textContent = data.counter;
+                document.getElementById('wifiStrength').textContent = data.wifi_strength + ' dBm';
+                document.getElementById('lastUpdate').textContent = data.lastUpdate;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Update data every second
+    setInterval(updateESP32Data, 1000);
+</script>
+<!-- ... existing code ... --> 

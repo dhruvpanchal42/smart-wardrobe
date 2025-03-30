@@ -7,70 +7,267 @@
     <title>Add Clothes</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-         body {
-            background-color: #FAD0C9FF;
+        /* Base styles */
+        body {
+            background: linear-gradient(135deg, #FAD0C9FF 0%, #F8B3A5 100%);
+            min-height: 100vh;
         }
 
+        .container-box {
+            background: rgba(16, 24, 32, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 95%;
+            margin: 1rem auto;
+            padding: 1.5rem;
+        }
+
+        /* Form elements */
         input,
         select,
         textarea {
-            color: #000;
-            background-color: #ffffff;
+            background: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: #1F2937;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            font-size: 1rem;
         }
 
         input::placeholder {
-            color: #A0AEC0;
+            color: #6B7280;
         }
 
-        #mobile-menu {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 250px;
-            height: auto;
-            max-height: 80%;
-            background-color: #2D3748;
-            transition: right 0.3s ease;
-            z-index: 50;
-            overflow-y: auto;
-            padding: 1rem;
-        }
-
-        #mobile-menu.show {
-            right: 0;
-        }
-
-        #mobile-menu a {
-            color: #F56565;
-            text-decoration: none;
-            padding: 1rem 0;
-            text-align: left;
-            width: 100%;
-        }
-
-        .close-btn {
+        select {
+            background-color: white;
             cursor: pointer;
-            color: white;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
         }
 
-        .notification {
-            display: none;
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #F56565;
+            box-shadow: 0 0 0 2px rgba(245, 101, 101, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
             color: white;
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 0.5rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            display: block;
+            font-size: 1rem;
+        }
+
+        h2.page-title {
+            color: white;
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
             text-align: center;
         }
 
-        #preview {
+        /* Mobile Menu */
+        #mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(16, 24, 32, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            padding: 2rem;
             display: none;
+            transform: translateX(100%);
+        }
+
+        .mobile-menu-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        #mobile-menu.active {
+            display: flex;
+            transform: translateX(0);
+        }
+
+        @media (min-width: 768px) {
+            #mobile-menu {
+                display: none;
+            }
+        }
+
+        #mobile-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        #mobile-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+        }
+
+        /* Hamburger Button */
+        .hamburger-btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 28px;
+            height: 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 60;
+        }
+
+        .hamburger-btn span {
+            width: 100%;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transform-origin: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container-box {
+                width: 95%;
+                margin: 1rem auto;
+                padding: 1.25rem;
+            }
+
+            #mobile-menu {
+                padding-top: 4rem;
+            }
+
+            .mobile-menu-content {
+                width: 100%;
+            }
+
+            .mobile-menu-content a {
+                width: 100%;
+                text-align: center;
+                font-size: 1.25rem;
+                padding: 1rem;
+            }
+        }
+
+        /* Submit button styling */
+        .submit-btn {
+            background: #F56565;
+            color: white;
+            width: 100%;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            margin-top: 2rem;
+        }
+
+        .submit-btn:hover {
+            background: #E53E3E;
+        }
+
+        /* Custom file input styling */
+        input[type="file"] {
+            background: white;
+            color: #1F2937;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid #F56565;
+        }
+
+        input[type="file"]::-webkit-file-upload-button {
+            background: #F56565;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin-right: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background: #E53E3E;
+        }
+
+        /* Enhanced select styling */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23F56565'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem;
+        }
+
+        /* Preview image styling */
+        #preview {
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
             margin-top: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Navbar enhancements */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #F56565;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
     </style>
 </head>
@@ -84,33 +281,36 @@
         </div>
 
         <!-- Navigation Links Section for large screens -->
-        <div class="hidden lg:flex items-center space-x-6 ml-auto">
-            <a href="/intro" class="text-white-400 hover:text-red-500">Home</a>
-            <a href="/about" class="text-white-400 hover:text-red-500">About</a>
-            <a href="/contact" class="text-white-400 hover:text-red-500">Contact us</a>
+        <div class="hidden md:flex items-center space-x-6">
+            <a href="/intro" class="text-white hover:text-red-500">Home</a>
+            <a href="/about" class="text-white hover:text-red-500">About</a>
+            <a href="/contact" class="text-white hover:text-red-500">Contact us</a>
             <a href="/users/logout" class="text-red-400 hover:text-red-500">Logout</a>
         </div>
 
         <!-- Hamburger menu button for small screens -->
-        <div class="md:hidden">
-            <button id="menuButton" class="focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
+        <div class="block md:hidden">
+            <button id="menuButton" class="hamburger-btn focus:outline-none">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
         </div>
     </nav>
 
-    <div id="mobile-menu" class="flex flex-col items-start space-y-4 hidden">
-        <button class="close-btn" id="closeButton">&times;</button>
-        <a href="/intro" class="text-white">Home</a>
-        <a href="/about" class="text-white">About</a>
-        <a href="/contact" class="text-white">Contact us</a>
-        <a href="/users/logout" class="text-red-400 hover:text-red-500">Logout</a>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden">
+        <button class="close-btn" id="closeButton">×</button>
+        <div class="mobile-menu-content">
+            <a href="/intro" class="nav-link">Home</a>
+            <a href="/about" class="nav-link">About</a>
+            <a href="/contact" class="nav-link">Contact us</a>
+            <a href="/users/logout" class="nav-link text-red-500">Logout</a>
+        </div>
     </div>
 
-    <div class="bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-md w-full mx-auto mt-4">
-        <h2 class="text-2xl font-bold mb-6 text-center">Add Clothes to Your Wardrobe</h2>
+    <div class="container-box">
+        <h2 class="text-2xl font-bold mb-6 text-center text-white">Add Clothes to Your Wardrobe</h2>
 
         <!-- Display flash messages -->
         <% if (error.length > 0) { %>
@@ -129,106 +329,234 @@
         <% } %>
 
         <form id="addClothesForm" action="/clothes/add-clothes" method="POST" enctype="multipart/form-data">
-            <div class="grid grid-cols-1 gap-4 mb-4">
-                <!-- Gender Selection -->
-                <div>
-                    <label for="gender" class="block mb-2">Gender</label>
-                    <select id="gender" name="gender" class="w-full p-2 rounded" required>
-                        <option value="">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                </div>
-
-                <!-- Subcategory Selection -->
-                <div>
-                    <label for="subcategory" class="block mb-2">Subcategory</label>
-                    <select id="subcategory" name="subcategory" class="w-full p-2 rounded" required>
-                        <option value="">Select Subcategory</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label class="form-label" for="gender">Gender</label>
+                <select id="gender" name="gender" class="w-full p-2 rounded" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Unisex">Unisex</option>
+                </select>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="size" class="block mb-2">Size</label>
-                    <select id="size" name="size" class="w-full p-2 rounded" required>
-                        <option value="">Select Size</option>
-                        <option value="Small">Small</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Large">Large</option>
-                        <option value="Extra Large">Extra Large</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="color" class="block mb-2">Color</label>
-                    <input type="text" id="color" name="color" class="w-full p-2 rounded" placeholder="Enter color" required>
-                </div>
+            <div class="form-group">
+                <label class="form-label" for="subcategory">Subcategory</label>
+                <select id="subcategory" name="subcategory" class="w-full p-2 rounded" required>
+                    <option value="">Select Subcategory</option>
+                    <option value="Shirt">Shirt</option>
+                    <option value="T-Shirt">T-Shirt</option>
+                    <option value="Jeans">Jeans</option>
+                    <option value="Jacket">Jacket</option>
+                    <option value="Short">Short</option>
+                    <option value="Dress">Dress</option>
+                    <option value="Skirt">Skirt</option>
+                    <option value="Top">Top</option>
+                </select>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="fabric" class="block mb-2">Fabric Type</label>
-                    <select id="fabric" name="fabric" class="w-full p-2 rounded" required>
-                        <option value="">Select Fabric Type</option>
-                        <option value="Cotton">Cotton</option>
-                        <option value="Wool">Wool</option>
-                        <option value="Polyester">Polyester</option>
-                        <option value="Silk">Silk</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label class="form-label" for="size">Size</label>
+                <select id="size" name="size" class="w-full p-2 rounded" required>
+                    <option value="">Select Size</option>
+                    <option value="Small">Small</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Large">Large</option>
+                    <option value="Extra Large">Extra Large</option>
+                </select>
             </div>
 
-            <!-- New fields for occasion and weather -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="occasion" class="block mb-2">Occasion</label>
-                    <select id="occasion" name="occasion" class="w-full p-2 rounded" required>
-                        <option value="Casual">Casual</option>
-                        <option value="Formal">Formal</option>
-                        <option value="Sports">Sports</option>
-                        <option value="Party">Party</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="weather" class="block mb-2">Weather</label>
-                    <select id="weather" name="weather" class="w-full p-2 rounded" required>
-                        <option value="Sunny">Sunny</option>
-                        <option value="Rainy">Rainy</option>
-                        <option value="Cold">Cold</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label class="form-label" for="color">Color</label>
+                <select id="color" name="color" class="w-full p-2 rounded" required>
+                    <option value="">Select Color</option>
+                    <option value="Red">Red</option>
+                    <option value="Blue">Blue</option>
+                    <option value="Green">Green</option>
+                    <option value="Black">Black</option>
+                    <option value="White">White</option>
+                </select>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="image" class="block mb-2">Image Upload</label>
-                    <input type="file" id="image" name="image" accept="image/*" class="w-full p-2 rounded" required />
-                    <img id="preview" class="w-full mt-4 rounded" />
-                    <div class="notification" id="notification">Photo uploaded successfully!</div>
-                </div>
+            <div class="form-group">
+                <label class="form-label" for="fabric">Fabric Type</label>
+                <select id="fabric" name="fabric" class="w-full p-2 rounded" required>
+                    <option value="">Select Fabric Type</option>
+                    <option value="Cotton">Cotton</option>
+                    <option value="Wool">Wool</option>
+                    <option value="Polyester">Polyester</option>
+                    <option value="Silk">Silk</option>
+                    <option value="Denim">Denim</option>
+                    <option value="Linen">Linen</option>
+                </select>
             </div>
 
-            <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded">Add Clothes</button>
+            <div class="form-group">
+                <label class="form-label" for="occasion">Occasion</label>
+                <select id="occasion" name="occasion" class="w-full p-2 rounded" required>
+                    <option value="">Select Occasion</option>
+                    <option value="Casual">Casual</option>
+                    <option value="Formal">Formal</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Party">Party</option>
+                    <option value="Business">Business</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="weather">Weather</label>
+                <select id="weather" name="weather" class="w-full p-2 rounded" required>
+                    <option value="">Select Weather</option>
+                    <option value="Sunny">Sunny</option>
+                    <option value="Rainy">Rainy</option>
+                    <option value="Cold">Cold</option>
+                    <option value="Hot">Hot</option>
+                    <option value="All Weather">All Weather</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="image">Image Upload</label>
+                <input type="file" id="image" name="image" accept="image/*" class="w-full p-2 rounded" required />
+                <img id="preview" class="w-full mt-4 rounded" />
+            </div>
+
+            <button type="submit" class="submit-btn">Add to Wardrobe</button>
         </form>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script>
-        document.getElementById('menuButton').onclick = function () {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.remove('hidden');
-            mobileMenu.style.right = '0';
-        };
+        // GSAP Animations
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuButton = document.getElementById('menuButton');
+        const closeButton = document.getElementById('closeButton');
+        const hamburgerLines = menuButton.querySelectorAll('span');
+        const menuLinks = document.querySelectorAll('.mobile-menu-content a');
 
-        document.getElementById('closeButton').onclick = function () {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.add('hidden');
-            mobileMenu.style.right = '-100%';
-        };
+        // Menu open handler
+        menuButton.addEventListener('click', () => {
+            mobileMenu.style.display = 'flex';
+            requestAnimationFrame(() => {
+                gsap.to(mobileMenu, {
+                    x: '0%',
+                    duration: 0.5,
+                    ease: 'power3.inOut'
+                });
+
+                // Animate hamburger to X
+                gsap.to(hamburgerLines[0], {
+                    rotate: 45,
+                    y: 9,
+                    duration: 0.3
+                });
+                gsap.to(hamburgerLines[1], {
+                    opacity: 0,
+                    duration: 0.3
+                });
+                gsap.to(hamburgerLines[2], {
+                    rotate: -45,
+                    y: -9,
+                    duration: 0.3
+                });
+
+                // Animate menu links
+                gsap.from(menuLinks, {
+                    x: 50,
+                    opacity: 0,
+                    duration: 0.3,
+                    stagger: 0.1,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        // Menu close handler
+        closeButton.addEventListener('click', () => {
+            // Animate menu out
+            gsap.to(mobileMenu, {
+                x: '100%',
+                duration: 0.5,
+                ease: 'power3.inOut',
+                onComplete: () => {
+                    mobileMenu.style.display = 'none';
+                }
+            });
+
+            // Animate X back to hamburger
+            gsap.to(hamburgerLines[0], {
+                rotate: 0,
+                y: 0,
+                duration: 0.3
+            });
+            gsap.to(hamburgerLines[1], {
+                opacity: 1,
+                duration: 0.3
+            });
+            gsap.to(hamburgerLines[2], {
+                rotate: 0,
+                y: 0,
+                duration: 0.3
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (mobileMenu.style.display === 'flex' && 
+                !mobileMenu.contains(e.target) && 
+                !menuButton.contains(e.target)) {
+                closeButton.click();
+            }
+        });
+
+        // Close menu when pressing escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileMenu.style.display === 'flex') {
+                closeButton.click();
+            }
+        });
+
+        // Page load animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate in the container
+            gsap.from(".container-box", {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                ease: "power3.out"
+            });
+
+            // Stagger in the form groups
+            gsap.from(".form-group", {
+                opacity: 0,
+                y: 20,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+
+            // Animate in the submit button
+            gsap.from(".submit-btn", {
+                opacity: 0,
+                y: 20,
+                duration: 0.5,
+                delay: 0.3,
+                ease: "back.out(1.7)"
+            });
+
+            // Animate in the navigation links
+            gsap.from(".nav-link", {
+                opacity: 0,
+                y: -20,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+        });
 
         const subcategoryOptions = {
             Male: ['T-Shirt', 'Shirt', 'Jeans', 'Jacket', 'Short'],
-            Female: ['Dress', 'Skirt', 'Top', 'Jeans', ]
+            Female: ['Dress', 'Skirt', 'Top', 'Jeans'],
+            Unisex: ['T-Shirt', 'Shirt', 'Jeans', 'Jacket']
         };
 
         document.getElementById('gender').addEventListener('change', function () {
@@ -249,18 +577,15 @@
         document.getElementById('image').addEventListener('change', function (event) {
             const file = event.target.files[0];
             const preview = document.getElementById('preview');
-            const notification = document.getElementById('notification');
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
-                    notification.style.display = 'block';
                 }
                 reader.readAsDataURL(file);
             } else {
                 preview.style.display = 'none';
-                notification.style.display = 'none';
             }
         });
     </script>

@@ -83,38 +83,81 @@
         #mobile-menu {
             position: fixed;
             top: 0;
-            right: -100%;
-            width: 250px;
+            right: -300px; /* Start off-screen */
+            width: 300px;
             height: 100vh;
-            background-color: #2D3748;
-            transition: right 0.3s ease;
+            background-color: #101820FF;
             z-index: 50;
-            padding: 1rem;
-            overflow-y: auto;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        #mobile-menu.show {
-            right: 0;
+            gap: 2rem;
         }
 
         #mobile-menu a {
-            text-align: left;
             color: white;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: block;
+            text-decoration: none;
             font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        #mobile-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         #closeButton {
-            color: white;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
             background: none;
             border: none;
+            color: white;
             font-size: 1.5rem;
-            margin-left: auto;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        #closeButton:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Grid Adjustments */
+        @media (max-width: 640px) {
+            .wardrobe-container {
+                grid-template-columns: repeat(1, 1fr);
+                padding: 0.5rem;
+            }
+            .filter-section form {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .inner {
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .wardrobe-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .filter-section form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .wardrobe-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+            .filter-section form {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         /* Ensure Clear Filters button is responsive */
@@ -136,6 +179,7 @@
             <a href="/intro" class=" gsap2 text-white-400 hover:text-red-500">Home</a>
             <a href="/intro" class=" gsap2 text-white-400 hover:text-red-500">About</a>
             <a href="/intro" class=" gsap2 text-white-400 hover:text-red-500">Contact us</a>
+            <a href="/esp32/monitor" class="gsap2 text-white-400 hover:text-red-500">ESP32 Monitor</a>
             <a href="/users/logout" class=" gsap2 text-red-400 hover:text-red-500">Logout</a>
         </div>
 
@@ -157,6 +201,7 @@
         <a href="/intro">Home</a>
         <a href="/intro">About</a>
         <a href="/intro">Contact us</a>
+        <a href="/esp32/monitor">ESP32 Monitor</a>
         <a href="/users/logout" class="text-red-400">Logout</a>
     </div>
 
@@ -183,17 +228,27 @@
         <div class="p-4 text-black">
             <form id="gemini-form" class="space-y-4">
                 <div class="mb-4">
-                    <label for="prompt" class="block text-sm font-medium text-gray-700 mb-2">Ask Gemini for Outfit Advice</label>
-                    <textarea id="prompt" placeholder="Example: What should I wear for a formal dinner tonight? Or: Suggest an outfit for a sunny day at the beach."
+                    <label for="prompt" class="block text-sm font-medium text-gray-700 mb-2">Ask for Outfit Advice to Gemini</label>
+                    <textarea id="prompt" placeholder="Example: What to wear for gym?"
                         class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">
-                    Get Personalized Outfit Advice
+                    Get Outfit Suggestion
                 </button>
             </form>
-            <div id="description" class="mt-4 p-4 bg-gray-100 rounded hidden">
-                <h3 class="text-lg font-semibold mb-2">Gemini's Recommendation:</h3>
-                <p id="description-text" class="text-gray-700"></p>
+            <div id="recommendation-section" class="mt-4 hidden">
+                <p id="description-text" class="text-gray-700 mb-4 p-2 bg-gray-100 rounded"></p>
+                <div id="recommended-items" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Recommended items will be displayed here -->
+                </div>
+                <div class="flex space-x-4 mt-4">
+                    <button id="try-different" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                        Try Different Suggestion
+                    </button>
+                    <button id="show-all" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+                        Show All Clothes
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -289,29 +344,24 @@
                     <button id="clearFilters" class="clear-filters mt-4">Clear Filters</button>
                 </div>
 
-                <div class="wardrobe-container">
-                    <% clothes.forEach(cloth=> { %>
-                        <div class="clothing-item">
-                            <img src="<%= cloth.image %>" alt="<%= cloth.name %>" />
-                            <h3 class="text-lg font-semibold mt-2">
-                                <%= cloth.name %>
-                            </h3>
-                            <p class="text-sm">Gender: <%= cloth.gender %>
-                            </p>
-                            <p class="text-sm">Size: <%= cloth.size %>
-                            </p>
-                            <p class="text-sm">Subcategory: <%= cloth.subcategory %>
-                            </p>
-                            <p class="text-sm">Color: <%= cloth.color %>
-                            </p>
-                            <p class="text-sm">Fabric: <%= cloth.fabric %>
-                            </p>
-                            <p class="text-sm">Occasion: <%= cloth.occasion %>
-                            </p>
-                            <p class="text-sm">Weather: <%= cloth.weather %>
-                            </p>
+                <div id="wardrobe-container" class="wardrobe-container">
+                    <% clothes.forEach(cloth => { %>
+                        <div class="clothing-item" data-id="<%= cloth._id %>" 
+                             data-subcategory="<%= cloth.subcategory %>"
+                             data-color="<%= cloth.color %>"
+                             data-fabric="<%= cloth.fabric %>"
+                             data-occasion="<%= cloth.occasion %>"
+                             data-weather="<%= cloth.weather %>">
+                            <img src="<%= cloth.image %>" alt="<%= cloth.subcategory %>" />
+                            <h3 class="text-lg font-semibold mt-2"><%= cloth.subcategory %></h3>
+                            <p class="text-sm">Gender: <%= cloth.gender %></p>
+                            <p class="text-sm">Size: <%= cloth.size %></p>
+                            <p class="text-sm">Color: <%= cloth.color %></p>
+                            <p class="text-sm">Fabric: <%= cloth.fabric %></p>
+                            <p class="text-sm">Occasion: <%= cloth.occasion %></p>
+                            <p class="text-sm">Weather: <%= cloth.weather %></p>
                         </div>
-                        <% }); %>
+                    <% }); %>
                 </div>
                 <% } %>
     </div>
@@ -319,16 +369,25 @@
 
     <script>
         const form = document.getElementById('gemini-form');
-        const descriptionDiv = document.getElementById('description');
+        const recommendationSection = document.getElementById('recommendation-section');
         const descriptionText = document.getElementById('description-text');
+        const recommendedItems = document.getElementById('recommended-items');
+        const tryDifferentBtn = document.getElementById('try-different');
+        const showAllBtn = document.getElementById('show-all');
+        const wardrobeContainer = document.getElementById('wardrobe-container');
+        let allClothingItems = [];
+
+        // Store all clothing items on page load
+        document.querySelectorAll('.clothing-item').forEach(item => {
+            allClothingItems.push(item.outerHTML);
+        });
 
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
             const prompt = document.getElementById('prompt').value;
             
-            // Show loading state
-            descriptionText.textContent = 'Getting personalized recommendation...';
-            descriptionDiv.classList.remove('hidden');
+            descriptionText.textContent = 'Getting suggestion...';
+            recommendationSection.classList.remove('hidden');
 
             try {
                 const response = await fetch('/api/gemini/generate-description', {
@@ -336,28 +395,128 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ prompt })
+                    body: JSON.stringify({ 
+                        prompt: `Based on the following request, recommend specific items from my wardrobe using exact format "**Color Fabric Type**" (e.g., **Black Wool T-shirt**): ${prompt}`
+                    })
                 });
 
                 const data = await response.json();
                 
                 if (response.ok) {
                     descriptionText.textContent = data.description;
+                    const recommendations = parseRecommendations(data.description);
+                    displayRecommendedItems(recommendations);
                 } else {
-                    let errorMessage = 'Error: ' + data.message;
-                    if (data.error) {
-                        errorMessage += '\n' + data.error;
-                    }
-                    if (data.details) {
-                        console.error('Detailed error:', data.details);
-                    }
-                    descriptionText.textContent = errorMessage;
+                    descriptionText.textContent = 'Error: ' + (data.message || 'Failed to get recommendations');
                 }
             } catch (error) {
-                console.error('Network or other error:', error);
-                descriptionText.textContent = 'Error: Failed to connect to the server. Please check your internet connection and try again.';
+                console.error('Error:', error);
+                descriptionText.textContent = 'Error: Failed to get recommendations';
             }
         });
+
+        function parseRecommendations(description) {
+            const items = [];
+            const clothingItems = document.querySelectorAll('.clothing-item');
+            
+            // Extract items between ** markers
+            const matches = description.match(/\*\*(.*?)\*\*/g) || [];
+            if (!matches.length) {
+                console.log('No recommendations found in format **Color Fabric Type**');
+                return items;
+            }
+
+            const recommendedItems = matches.map(match => {
+                const item = match.replace(/\*\*/g, '').toLowerCase();
+                const parts = item.split(' ');
+                if (parts.length < 3) {
+                    console.log('Invalid recommendation format:', item);
+                    return null;
+                }
+                return {
+                    color: parts[0],
+                    fabric: parts[1],
+                    type: parts.slice(2).join(' ').replace('t-shirt', 't shirt').replace('-', ' ') // Normalize type
+                };
+            }).filter(item => item !== null);
+            
+            clothingItems.forEach(item => {
+                // Normalize the data attributes
+                const subcategory = item.dataset.subcategory.toLowerCase().replace('-', ' ');
+                const color = item.dataset.color.toLowerCase();
+                const fabric = item.dataset.fabric.toLowerCase();
+                
+                console.log('Checking item:', { subcategory, color, fabric }); // Debug log
+                
+                // Check each recommended item for a match
+                for (const rec of recommendedItems) {
+                    console.log('Against recommendation:', rec); // Debug log
+                    
+                    // Normalize the type for comparison
+                    const normalizedType = rec.type.replace('t-shirt', 't shirt').replace('-', ' ');
+                    
+                    if (color === rec.color && 
+                        fabric === rec.fabric && 
+                        subcategory.replace('-', ' ') === normalizedType) {
+                        console.log('Found match!'); // Debug log
+                        items.push(item);
+                        break;
+                    }
+                }
+            });
+            
+            console.log('Found items:', items.length); // Debug log
+            return items;
+        }
+
+        function displayRecommendedItems(items) {
+            recommendedItems.innerHTML = '';
+            wardrobeContainer.style.display = 'none';
+            document.querySelector('.filter-section').style.display = 'none';
+            document.querySelector('#weatherForm').parentElement.style.display = 'none';
+            
+            if (items.length > 0) {
+                items.forEach(item => {
+                    const itemDiv = item.cloneNode(true);
+                    itemDiv.classList.add('bg-gray-800', 'p-4', 'rounded-lg');
+                    
+                    // Make text white and visible
+                    const textElements = itemDiv.querySelectorAll('p, h3');
+                    textElements.forEach(el => {
+                        el.classList.add('text-white', 'mb-1');
+                    });
+                    
+                    // Make image larger and centered
+                    const img = itemDiv.querySelector('img');
+                    if (img) {
+                        img.classList.remove('h-48');
+                        img.classList.add('w-full', 'h-64', 'object-contain', 'mb-3', 'rounded');
+                    }
+                    
+                    recommendedItems.appendChild(itemDiv);
+                });
+            } else {
+                recommendedItems.innerHTML = '<p class="text-red-500 text-center">No matching items found in your wardrobe.</p>';
+            }
+        }
+
+        // Show all clothes button
+        showAllBtn.addEventListener('click', () => {
+            recommendationSection.classList.add('hidden');
+            wardrobeContainer.style.display = 'grid';
+            document.querySelector('.filter-section').style.display = 'block';
+            document.querySelector('#weatherForm').parentElement.style.display = 'block';
+            wardrobeContainer.innerHTML = allClothingItems.join('');
+        });
+
+        // Try different outfits button
+        tryDifferentBtn.addEventListener('click', () => {
+            document.getElementById('prompt').value = '';
+            document.getElementById('prompt').focus();
+            recommendedItems.innerHTML = '';
+            descriptionText.textContent = '';
+        });
+
         document.getElementById('weatherForm').addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent the default form submission behavior
 
@@ -398,28 +557,79 @@
             }
         });
 
+        // GSAP Animations
+        function initAnimations() {
+            // Navbar animations
+            gsap.from(".gsap1", {
+                opacity: 0,
+                y: -40,
+                duration: 1,
+                ease: "power2.out"
+            });
 
-        gsap.from(".gsap1", {
-            opacity: 0,
-            y: -40,
-            duration: 1,
+            gsap.from(".gsap2", {
+                opacity: 0,
+                y: -40,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
 
-        })
-        gsap.from(".gsap2", {
-            opacity: 0,
-            y: -40,
-            duration: 1,
-            stagger: 0.2
-        })
-        document.getElementById('menuButton').onclick = function () {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('show');
+            // Content animations
+            gsap.from(".inner", {
+                opacity: 0,
+                y: 20,
+                duration: 1,
+                delay: 0.5,
+                ease: "power2.out"
+            });
+
+            gsap.from(".clothing-item", {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+
+            // Form animations
+            gsap.from(".filter-section", {
+                opacity: 0,
+                y: 20,
+                duration: 0.8,
+                delay: 0.3,
+                ease: "power2.out"
+            });
+        }
+
+        // Mobile Menu Animation
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuTimeline = gsap.timeline({ paused: true });
+
+        menuTimeline
+            .to(mobileMenu, {
+                right: 0,
+                duration: 0.5,
+                ease: "power2.inOut"
+            })
+            .from("#mobile-menu a", {
+                opacity: 0,
+                x: 50,
+                stagger: 0.1,
+                duration: 0.3,
+                ease: "power2.out"
+            }, "-=0.2");
+
+        document.getElementById('menuButton').onclick = function() {
+            menuTimeline.play();
         };
 
-        document.getElementById('closeButton').onclick = function () {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.remove('show');
+        document.getElementById('closeButton').onclick = function() {
+            menuTimeline.reverse();
         };
+
+        // Initialize animations on page load
+        document.addEventListener('DOMContentLoaded', initAnimations);
 
         document.getElementById('clearFilters').onclick = function () {
             document.getElementById('occasion').selectedIndex = 0;
@@ -430,6 +640,38 @@
             // Submit the filter form to refresh the clothing items
             document.querySelector('form').submit();
         };
+
+        async function findAlternatives(itemType) {
+            const alternativesSection = document.getElementById('alternativesSection');
+            const alternativesList = document.getElementById('alternativesList');
+            
+            // Show loading state
+            alternativesSection.classList.remove('hidden');
+            alternativesList.innerHTML = '<div class="text-white">Loading alternatives...</div>';
+            
+            try {
+                // Fetch alternatives from your wardrobe based on item type
+                const response = await fetch(`/clothes/alternatives?type=${itemType}&occasion=<%= occasion %>&weather=<%= weather %>`);
+                const data = await response.json();
+                
+                if (data.alternatives && data.alternatives.length > 0) {
+                    alternativesList.innerHTML = data.alternatives.map(item => `
+                        <div class="bg-gray-700 p-4 rounded">
+                            <img src="${item.image}" alt="${item.subcategory}" class="w-full h-32 object-cover rounded mb-2">
+                            <div class="text-white">
+                                <p class="font-semibold">${item.subcategory}</p>
+                                <p class="text-sm text-gray-300">Color: ${item.color}</p>
+                                <p class="text-sm text-gray-300">Fabric: ${item.fabric}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    alternativesList.innerHTML = '<div class="text-white">No alternative options found.</div>';
+                }
+            } catch (error) {
+                alternativesList.innerHTML = '<div class="text-red-500">Error loading alternatives.</div>';
+            }
+        }
     </script>
 </body>
 

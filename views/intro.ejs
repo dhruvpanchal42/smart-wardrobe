@@ -52,7 +52,7 @@
             position: relative;
             z-index: 1;
             max-width: 800px;
-            margin: 10rem auto; /* Added margin to prevent overlap with navbar */
+            margin: 3rem auto; /* Added margin to prevent overlap with navbar */
             padding: 3rem 2rem;
             background-color: rgba(255, 255, 255, 0.1); /* Glassmorphism effect */
             border-radius: 15px;
@@ -186,6 +186,7 @@
                 <a class="gsap2" href="/intro">Home</a>
                 <a class="gsap2" href="/intro">About</a>
                 <a class="gsap2" href="/intro">Contact</a>
+                <a class="gsap2" href="/camera">Smart Camera</a>
                 <a class="gsap2" href="/users/logout" class="text-red-500">Logout</a>
             </div>
         </div>
@@ -197,7 +198,56 @@
         <a href="/intro">Home</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
+        <a href="/camera">Smart Camera</a>
         <a href="/users/logout" class="text-red-500">Logout</a>
+    </div>
+
+    <!-- Features Introduction Section -->
+    <div class="max-w-6xl mx-auto px-4 py-8 mt-24">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Two Ways to Add Your Clothes</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6 mt-4">
+                <!-- Smart Camera Option -->
+                <div class="bg-gray-50 rounded-lg p-6 transform hover:scale-105 transition-transform duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-red-100 p-3 rounded-full mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Smart Camera</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">Quick and easy way to add clothes by taking a photo. Access it through the "smart camera" in the navigation bar.</p>
+                    <div class="flex items-center text-sm text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span>Look for the camera icon in the top navigation</span>
+                    </div>
+                </div>
+
+                <!-- Manual Entry Option -->
+                <div class="bg-gray-50 rounded-lg p-6 transform hover:scale-105 transition-transform duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Manual Entry</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">Add detailed information about your clothes using our comprehensive form. Use the 'Add Clothes' button below.</p>
+                    <a href="/clothes/add-clothes" class="inline-flex items-center text-blue-500 hover:text-blue-600">
+                        <span>Go to Add Clothes form</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Animated Background Dots -->
@@ -205,8 +255,8 @@
 
     <!-- Main content -->
     <div class="main-content">
-        <h1 class="gsap3">Welcome to Smart Wardrobe</h1>
-        <p class="gsap4">Organize your wardrobe efficiently and get personalized suggestions for your outfits. Start adding your clothes now!</p>
+        <h1 class="gsap3">Your Personal Style Assistant</h1>
+        <p class="gsap4">Transform your wardrobe experience with smart organization and AI-powered outfit suggestions. Let's make dressing up fun and effortless!</p>
         <a href="/clothes/add-clothes" class="btn">Add Clothes</a>
         <a href="/clothes/get-outfits" class="btn">Get Outfits</a>
     </div>
@@ -262,6 +312,17 @@
 
         closeMenu.addEventListener('click', () => {
             mobileMenu.classList.remove('active'); // Remove 'active' to slide out
+        });
+
+        // Add GSAP animation for the features section
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.from(".bg-gray-50", {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
         });
     </script>
 

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Clothing - D Cube</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+        .custom-input {
+            display: none;
+        }
+        .custom-input.active {
+            display: block;
+        }
+        #camera {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
+            transform: scaleX(-1);
+            display: block !important;
+            background: black;
+        }
+        .environment #camera {
+            transform: scaleX(1);
+        }
+        .camera-container {
+            width: 100%;
+            height: 0;
+            padding-bottom: 65%;
+            position: relative;
+            background: black;
+            overflow: hidden;
+        }
+        .camera-container > * {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background-color: rgb(55, 65, 81);
+            color: white;
+            border-radius: 0.25rem;
+            border: 1px solid rgb(75, 85, 99);
+        }
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: rgb(239, 68, 68);
+        }
+        select option {
+            background-color: rgb(55, 65, 81);
+            color: white;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            margin: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: #3b82f6;
+            color: #ffffff;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <a href="/intro" class="btn">Back</a>
+    <div class="min-h-screen p-4">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl text-red-500 mb-6">Add New Clothing</h1>
+            
+            <!-- Flash Messages -->
+            <% if (messages.error) { %>
+                <div class="mb-4 p-3 bg-red-600 text-white rounded-md">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+            
+            <% if (messages.success) { %>
+                <div class="mb-4 p-3 bg-green-600 text-white rounded-md">
+                    <%= messages.success %>
+                </div>
+            <% } %>
+
+            <!-- Camera Interface -->
+            <div class="bg-gray-800 rounded-lg p-4 mb-6">
+                <!-- Camera Preview -->
+                <div class="camera-container rounded-lg mb-4">
+                    <div id="cameraError" class="hidden absolute inset-0 flex items-center justify-center text-white text-center p-4 z-20">
+                        <div>
+                            <p class="mb-2">Unable to access camera</p>
+                            <button onclick="retryCamera()" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600">
+                                Retry Camera Access
+                            </button>
+                        </div>
+                    </div>
+                    <video id="camera" autoplay playsinline muted></video>
+                    <canvas id="canvas" class="hidden"></canvas>
+                    
+                    <!-- Captured Image Preview -->
+                    <div id="capturedPreview" class="hidden absolute inset-0 z-10">
+                        <img id="previewImage" class="w-full h-full object-contain" alt="Captured Image">
+                    </div>
+                </div>
+
+                <!-- Camera Controls -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button id="captureBtn" class="bg-red-500 text-white px-6 py-3 rounded-full hover:bg-red-600 transition-colors shadow-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Capture
+                    </button>
+                    <button id="switchCameraBtn" class="bg-gray-700 text-white px-6 py-3 rounded-full hover:bg-gray-600 transition-colors shadow-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Switch Camera
+                    </button>
+                    <button id="retakeBtn" class="hidden bg-red-500 text-white px-6 py-3 rounded-full hover:bg-red-600 transition-colors shadow-lg">
+                        Retake Photo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Form for Manual Input -->
+            <form id="clothingForm" action="/clothes/add-clothes" method="POST" class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl text-white mb-4">Enter Clothing Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="custom-select">
+                        <label class="block text-gray-300 mb-2" for="category">Category</label>
+                        <select name="category" id="category" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Category</option>
+                            <option value="top">Top</option>
+                            <option value="bottom">Bottom</option>
+                            <option value="outerwear">Outerwear</option>
+                            <option value="dress">Dress</option>
+                            <option value="shoes">Shoes</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" name="custom_category" id="custom_category" 
+                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
+                            placeholder="Enter custom category">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2" for="subcategory">Subcategory</label>
+                        <input type="text" name="subcategory" id="subcategory" required
+                            class="w-full px-3 py-2 bg-gray-700 text-white rounded"
+                            placeholder="e.g., T-Shirt, Jeans, etc.">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2" for="color">Color</label>
+                        <input type="text" name="color" id="color" required
+                            class="w-full px-3 py-2 bg-gray-700 text-white rounded"
+                            placeholder="Enter color">
+                    </div>
+                    <div class="custom-select">
+                        <label class="block text-gray-300 mb-2" for="fabric">Fabric</label>
+                        <select name="fabric" id="fabric" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Fabric</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Wool">Wool</option>
+                            <option value="Polyester">Polyester</option>
+                            <option value="Silk">Silk</option>
+                            <option value="Denim">Denim</option>
+                            <option value="Linen">Linen</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" name="custom_fabric" id="custom_fabric" 
+                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
+                            placeholder="Enter custom fabric">
+                    </div>
+                    <div class="custom-select">
+                        <label class="block text-gray-300 mb-2" for="occasion">Occasion</label>
+                        <select name="occasion" id="occasion" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Occasion</option>
+                            <option value="Casual">Casual</option>
+                            <option value="Formal">Formal</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Party">Party</option>
+                            <option value="Business">Business</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" name="custom_occasion" id="custom_occasion" 
+                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
+                            placeholder="Enter custom occasion">
+                    </div>
+                    <div class="custom-select">
+                        <label class="block text-gray-300 mb-2" for="weather">Weather</label>
+                        <select name="weather" id="weather" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Weather</option>
+                            <option value="Sunny">Sunny</option>
+                            <option value="Rainy">Rainy</option>
+                            <option value="Cold">Cold</option>
+                            <option value="Hot">Hot</option>
+                            <option value="All Weather">All Weather</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" name="custom_weather" id="custom_weather" 
+                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
+                            placeholder="Enter custom weather">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2" for="size">Size</label>
+                        <input type="text" name="size" id="size" required
+                            class="w-full px-3 py-2 bg-gray-700 text-white rounded"
+                            placeholder="Enter size (e.g., XS, S, M, L, XL, XXL, or custom)">
+                    </div>
+                    <div class="custom-select">
+                        <label class="block text-gray-300 mb-2" for="gender">Gender</label>
+                        <select name="gender" id="gender" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Unisex">Unisex</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" name="custom_gender" id="custom_gender" 
+                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
+                            placeholder="Enter custom gender">
+                    </div>
+                </div>
+                <input type="hidden" name="image" id="imagePath">
+                <button type="submit" class="mt-6 w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                    Save to Wardrobe
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentStream = null;
+        let currentFacingMode = 'environment';
+        const video = document.getElementById('camera');
+
+        // Handle custom input fields
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', function() {
+                const customInput = this.parentElement.querySelector('.custom-input');
+                if (customInput) {
+                    if (this.value === 'other') {
+                        customInput.classList.add('active');
+                        customInput.required = true;
+                        this.required = false;
+                    } else {
+                        customInput.classList.remove('active');
+                        customInput.required = false;
+                        this.required = true;
+                    }
+                }
+            });
+        });
+
+        // Initialize camera with retry mechanism
+        async function initCamera() {
+            try {
+                document.getElementById('cameraError').classList.add('hidden');
+                
+                if (currentStream) {
+                    currentStream.getTracks().forEach(track => track.stop());
+                }
+
+                // Start with basic constraints
+                const constraints = {
+                    video: {
+                        facingMode: currentFacingMode,
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                };
+
+                currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = currentStream;
+                
+                // Update container class for proper mirroring
+                const container = video.parentElement;
+                if (currentFacingMode === 'environment') {
+                    container.classList.add('environment');
+                } else {
+                    container.classList.remove('environment');
+                }
+
+                // Make sure video is visible
+                video.style.display = 'block';
+                
+                // Log video dimensions for debugging
+                video.addEventListener('loadedmetadata', () => {
+                    console.log('Video dimensions:', video.videoWidth, 'x', video.videoHeight);
+                    video.play().catch(console.error);
+                });
+
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                document.getElementById('cameraError').classList.remove('hidden');
+            }
+        }
+
+        // Retry camera access
+        function retryCamera() {
+            initCamera();
+        }
+
+        // Switch camera
+        document.getElementById('switchCameraBtn').addEventListener('click', () => {
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            initCamera();
+        });
+
+        // Capture photo
+        document.getElementById('captureBtn').addEventListener('click', async () => {
+            const video = document.getElementById('camera');
+            const canvas = document.getElementById('canvas');
+            const capturedPreview = document.getElementById('capturedPreview');
+            const previewImage = document.getElementById('previewImage');
+            const captureBtn = document.getElementById('captureBtn');
+            const switchCameraBtn = document.getElementById('switchCameraBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+
+            // Set canvas size to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw video frame on canvas
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert to JPEG and show preview
+            const imageData = canvas.toDataURL('image/jpeg');
+            previewImage.src = imageData;
+
+            // Update UI
+            video.classList.add('hidden');
+            capturedPreview.classList.remove('hidden');
+            captureBtn.classList.add('hidden');
+            switchCameraBtn.classList.add('hidden');
+            retakeBtn.classList.remove('hidden');
+
+            // Stop the camera stream after capture
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
+
+            try {
+                // Upload image
+                const response = await fetch('/camera/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ image: imageData })
+                });
+
+                if (!response.ok) throw new Error('Failed to upload image');
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('imagePath').value = data.imagePath;
+                } else {
+                    throw new Error(data.error || 'Failed to process image');
+                }
+            } catch (err) {
+                console.error('Error uploading image:', err);
+                alert('Error uploading image. Please try again.');
+            }
+        });
+
+        // Retake photo
+        document.getElementById('retakeBtn').addEventListener('click', () => {
+            const video = document.getElementById('camera');
+            const capturedPreview = document.getElementById('capturedPreview');
+            const captureBtn = document.getElementById('captureBtn');
+            const switchCameraBtn = document.getElementById('switchCameraBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+
+            // Reset UI
+            video.classList.remove('hidden');
+            capturedPreview.classList.add('hidden');
+            captureBtn.classList.remove('hidden');
+            switchCameraBtn.classList.remove('hidden');
+            retakeBtn.classList.add('hidden');
+
+            // Reinitialize camera
+            initCamera();
+        });
+
+        // Form submission handler
+        document.getElementById('clothingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = {
+                gender: document.getElementById('gender').value === 'other' ? 
+                    document.getElementById('custom_gender').value : 
+                    document.getElementById('gender').value,
+                subcategory: document.getElementById('subcategory').value,
+                size: document.getElementById('size').value,
+                color: document.getElementById('color').value,
+                fabric: document.getElementById('fabric').value === 'other' ? 
+                    document.getElementById('custom_fabric').value : 
+                    document.getElementById('fabric').value,
+                occasion: document.getElementById('occasion').value === 'other' ? 
+                    document.getElementById('custom_occasion').value : 
+                    document.getElementById('occasion').value,
+                weather: document.getElementById('weather').value === 'other' ? 
+                    document.getElementById('custom_weather').value : 
+                    document.getElementById('weather').value,
+                image: document.getElementById('imagePath').value
+            };
+
+            // Validate image
+            if (!formData.image) {
+                alert('Please capture an image first');
+                return;
+            }
+
+            try {
+                const response = await fetch('/clothes/add-clothes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Clothing item successfully added!');
+                    window.location.href = '/clothes/get-outfits'; // Redirect to wardrobe
+                } else {
+                    alert(data.error || 'Failed to save clothing item. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            // Check if the browser supports mediaDevices
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                document.getElementById('cameraError').classList.remove('hidden');
+                document.getElementById('cameraError').querySelector('p').textContent = 
+                    'Your browser does not support camera access';
+                return;
+            }
+            initCamera();
+        });
+    </script>
+</body>
+</html>

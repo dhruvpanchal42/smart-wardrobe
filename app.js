@@ -16,16 +16,16 @@ const cors = require('cors'); // If you're working with CORS
 const weatherRoute = require('./routes/weather');
 const geminiRoutes = require('./routes/gemini')
 const forgotPasswordRoutes = require('./routes/forgotPassword');
-
+const cameraRoutes = require('./routes/camera');
+const esp32Routes = require('./routes/esp32'); // Add ESP32 routes
 
 // Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 app.use(flash())
 app.use(express.static(path.join(__dirname,'public')))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
-
 
 app.use(expressSession({
     secret: process.env.SESSION_SECRET || 'dcube',
@@ -41,19 +41,15 @@ app.use(passport.session());
 // Define routes
 app.use('/', indexRouter);
 app.use('/users', userRouter);
-app.use('/users', forgotPasswordRoutes);
 app.use('/clothes', clothRouter);
 app.use(weatherRoute);
 app.use('/api/gemini', geminiRoutes);
-
-
-
+app.use('/camera', cameraRoutes);
+app.use('/esp32', esp32Routes); // Add ESP32 routes
 
 // Static files and view engine
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
-
-
 
 // Start server and connect to MongoDB
 const port = process.env.PORT || 3000;
