@@ -21,27 +21,26 @@ const userClothSchema = mongoose.Schema({
     fabric: {
         type: String,
         required: true,
-        enum: ['Cotton', 'Wool', 'Polyester', 'Silk'], // Limit to specified fabric types
+        enum: ['Cotton', 'Wool', 'Polyester', 'Silk', 'Denim', 'Linen', 'Other'], // Updated fabric types
     },
     occasion: {
         type: String,
-        enum: ['Casual', 'Formal', 'Sports', 'Party'],
-        default: 'Casual',
+        required: true,
+        enum: ['Casual', 'Formal', 'Sports', 'Party', 'Business', 'Other'], // Updated occasions
     },
     weather: {
         type: String,
-        enum: ['Sunny', 'Rainy', 'Cold'],
-        default: 'Sunny',
+        required: true,
+        enum: ['Sunny', 'Rainy', 'Cold', 'Hot', 'All Weather', 'Other'], // Updated weather types
     },
     size: {
         type: String,
         required: true,
-         // Limit to specified sizes
     },
     gender: {
         type: String,
         required: true,
-         // Limit to specified genders
+        enum: ['Male', 'Female', 'Unisex', 'Other'], // Added gender options
     },
     image: {
         type: String, // Store the image URL after upload to Firebase

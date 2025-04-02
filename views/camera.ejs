@@ -147,49 +147,93 @@
                 <h2 class="text-xl text-white mb-4">Enter Clothing Details</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="custom-select">
-                        <label class="block text-gray-300 mb-2" for="category">Category</label>
-                        <select name="category" id="category" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
-                            <option value="">Select Category</option>
-                            <option value="top">Top</option>
-                            <option value="bottom">Bottom</option>
-                            <option value="outerwear">Outerwear</option>
-                            <option value="dress">Dress</option>
-                            <option value="shoes">Shoes</option>
-                            <option value="accessories">Accessories</option>
-                            <option value="other">Other</option>
+                        <label class="block text-gray-300 mb-2" for="gender">Gender</label>
+                        <select name="gender" id="gender" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Unisex">Unisex</option>
+                            <option value="Other">Other</option>
                         </select>
-                        <input type="text" name="custom_category" id="custom_category" 
+                        <input type="text" name="custom_gender" id="custom_gender" 
                             class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
-                            placeholder="Enter custom category">
+                            placeholder="Enter custom gender">
                     </div>
-                    <div>
-                        <label class="block text-gray-300 mb-2" for="subcategory">Subcategory</label>
-                        <input type="text" name="subcategory" id="subcategory" required
-                            class="w-full px-3 py-2 bg-gray-700 text-white rounded"
-                            placeholder="e.g., T-Shirt, Jeans, etc.">
-                    </div>
-                    <div>
-                        <label class="block text-gray-300 mb-2" for="color">Color</label>
-                        <input type="text" name="color" id="color" required
-                            class="w-full px-3 py-2 bg-gray-700 text-white rounded"
-                            placeholder="Enter color">
-                    </div>
+
                     <div class="custom-select">
-                        <label class="block text-gray-300 mb-2" for="fabric">Fabric</label>
+                        <label class="block text-gray-300 mb-2" for="subcategory">Subcategory</label>
+                        <select name="subcategory" id="subcategory" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Subcategory</option>
+                            <option value="Shirt">Shirt</option>
+                            <option value="T-Shirt">T-Shirt</option>
+                            <option value="Jeans">Jeans</option>
+                            <option value="Jacket">Jacket</option>
+                            <option value="Short">Short</option>
+                            <option value="Dress">Dress</option>
+                            <option value="Skirt">Skirt</option>
+                            <option value="Top">Top</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" name="custom_subcategory" id="custom_subcategory" 
+                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
+                            placeholder="Enter custom subcategory">
+                    </div>
+
+                    <div class="custom-select">
+                        <label class="block text-gray-300 mb-2" for="size">Size</label>
+                        <select name="size" id="size" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Size</option>
+                            <option value="XS">XS</option>
+                            <option value="Small">Small</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Large">Large</option>
+                            <option value="XL">Extra Large</option>
+                            <option value="XXL">XXL</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" name="custom_size" id="custom_size" 
+                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
+                            placeholder="Enter custom size">
+                    </div>
+
+                    <div class="custom-select">
+                        <label class="block text-gray-300 mb-2" for="color">Color</label>
+                        <select name="color" id="color" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
+                            <option value="">Select Color</option>
+                            <option value="Red">Red</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Green">Green</option>
+                            <option value="Black">Black</option>
+                            <option value="White">White</option>
+                            <option value="Yellow">Yellow</option>
+                            <option value="Purple">Purple</option>
+                            <option value="Pink">Pink</option>
+                            <option value="Brown">Brown</option>
+                            <option value="Gray">Gray</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" name="custom_color" id="custom_color" 
+                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
+                            placeholder="Enter custom color">
+                    </div>
+
+                    <div class="custom-select">
+                        <label class="block text-gray-300 mb-2" for="fabric">Fabric Type</label>
                         <select name="fabric" id="fabric" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
-                            <option value="">Select Fabric</option>
+                            <option value="">Select Fabric Type</option>
                             <option value="Cotton">Cotton</option>
                             <option value="Wool">Wool</option>
                             <option value="Polyester">Polyester</option>
                             <option value="Silk">Silk</option>
                             <option value="Denim">Denim</option>
                             <option value="Linen">Linen</option>
-                            <option value="other">Other</option>
+                            <option value="Other">Other</option>
                         </select>
                         <input type="text" name="custom_fabric" id="custom_fabric" 
                             class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
                             placeholder="Enter custom fabric">
                     </div>
+
                     <div class="custom-select">
                         <label class="block text-gray-300 mb-2" for="occasion">Occasion</label>
                         <select name="occasion" id="occasion" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
@@ -199,12 +243,13 @@
                             <option value="Sports">Sports</option>
                             <option value="Party">Party</option>
                             <option value="Business">Business</option>
-                            <option value="other">Other</option>
+                            <option value="Other">Other</option>
                         </select>
                         <input type="text" name="custom_occasion" id="custom_occasion" 
                             class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
                             placeholder="Enter custom occasion">
                     </div>
+
                     <div class="custom-select">
                         <label class="block text-gray-300 mb-2" for="weather">Weather</label>
                         <select name="weather" id="weather" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
@@ -214,30 +259,11 @@
                             <option value="Cold">Cold</option>
                             <option value="Hot">Hot</option>
                             <option value="All Weather">All Weather</option>
-                            <option value="other">Other</option>
+                            <option value="Other">Other</option>
                         </select>
                         <input type="text" name="custom_weather" id="custom_weather" 
                             class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
                             placeholder="Enter custom weather">
-                    </div>
-                    <div>
-                        <label class="block text-gray-300 mb-2" for="size">Size</label>
-                        <input type="text" name="size" id="size" required
-                            class="w-full px-3 py-2 bg-gray-700 text-white rounded"
-                            placeholder="Enter size (e.g., XS, S, M, L, XL, XXL, or custom)">
-                    </div>
-                    <div class="custom-select">
-                        <label class="block text-gray-300 mb-2" for="gender">Gender</label>
-                        <select name="gender" id="gender" class="w-full px-3 py-2 bg-gray-700 text-white rounded" required>
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Unisex">Unisex</option>
-                            <option value="other">Other</option>
-                        </select>
-                        <input type="text" name="custom_gender" id="custom_gender" 
-                            class="custom-input w-full px-3 py-2 bg-gray-700 text-white rounded mt-2"
-                            placeholder="Enter custom gender">
                     </div>
                 </div>
                 <input type="hidden" name="image" id="imagePath">
@@ -255,10 +281,10 @@
 
         // Handle custom input fields
         document.querySelectorAll('select').forEach(select => {
-            select.addEventListener('change', function() {
-                const customInput = this.parentElement.querySelector('.custom-input');
-                if (customInput) {
-                    if (this.value === 'other') {
+            const customInput = document.getElementById('custom_' + select.id);
+            if (customInput) {
+                select.addEventListener('change', function() {
+                    if (this.value === 'Other') {
                         customInput.classList.add('active');
                         customInput.required = true;
                         this.required = false;
@@ -267,8 +293,8 @@
                         customInput.required = false;
                         this.required = true;
                     }
-                }
-            });
+                });
+            }
         });
 
         // Initialize camera with retry mechanism
@@ -342,10 +368,17 @@
 
             // Draw video frame on canvas
             const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            if (currentFacingMode === 'user') {
+                // Flip horizontally for front camera
+                context.scale(-1, 1);
+                context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+                context.scale(-1, 1); // Reset scale
+            } else {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            }
 
             // Convert to JPEG and show preview
-            const imageData = canvas.toDataURL('image/jpeg');
+            const imageData = canvas.toDataURL('image/jpeg', 0.8); // Added quality parameter
             previewImage.src = imageData;
 
             // Update UI
@@ -362,26 +395,38 @@
             }
 
             try {
+                console.log('Uploading image to server...');
                 // Upload image
                 const response = await fetch('/camera/analyze', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ image: imageData })
+                    body: JSON.stringify({ 
+                        image: imageData,
+                        timestamp: Date.now()
+                    })
                 });
 
-                if (!response.ok) throw new Error('Failed to upload image');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to upload image');
+                }
 
                 const data = await response.json();
+                console.log('Server response:', data);
+
                 if (data.success) {
                     document.getElementById('imagePath').value = data.imagePath;
+                    console.log('Image path set to:', data.imagePath);
                 } else {
                     throw new Error(data.error || 'Failed to process image');
                 }
             } catch (err) {
                 console.error('Error uploading image:', err);
-                alert('Error uploading image. Please try again.');
+                alert('Error uploading image: ' + err.message);
+                // Reset UI to allow retaking photo
+                retakeBtn.click();
             }
         });
 
@@ -409,24 +454,23 @@
             e.preventDefault();
             
             // Get form data
-            const formData = {
-                gender: document.getElementById('gender').value === 'other' ? 
-                    document.getElementById('custom_gender').value : 
-                    document.getElementById('gender').value,
-                subcategory: document.getElementById('subcategory').value,
-                size: document.getElementById('size').value,
-                color: document.getElementById('color').value,
-                fabric: document.getElementById('fabric').value === 'other' ? 
-                    document.getElementById('custom_fabric').value : 
-                    document.getElementById('fabric').value,
-                occasion: document.getElementById('occasion').value === 'other' ? 
-                    document.getElementById('custom_occasion').value : 
-                    document.getElementById('occasion').value,
-                weather: document.getElementById('weather').value === 'other' ? 
-                    document.getElementById('custom_weather').value : 
-                    document.getElementById('weather').value,
-                image: document.getElementById('imagePath').value
-            };
+            const formData = {};
+            const fields = ['gender', 'subcategory', 'size', 'color', 'fabric', 'occasion', 'weather'];
+            
+            fields.forEach(field => {
+                const select = document.getElementById(field);
+                const customInput = document.getElementById('custom_' + field);
+                formData[field] = select.value === 'Other' ? customInput.value : select.value;
+            });
+            
+            formData.image = document.getElementById('imagePath').value;
+
+            // Validate all required fields
+            const missingFields = fields.filter(field => !formData[field]);
+            if (missingFields.length > 0) {
+                alert('Please fill in all required fields: ' + missingFields.join(', '));
+                return;
+            }
 
             // Validate image
             if (!formData.image) {
@@ -443,17 +487,22 @@
                     body: JSON.stringify(formData)
                 });
 
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to save clothing item');
+                }
+
                 const data = await response.json();
                 
                 if (data.success) {
                     alert('Clothing item successfully added!');
-                    window.location.href = '/clothes/get-outfits'; // Redirect to wardrobe
+                    window.location.href = '/clothes/successpage';
                 } else {
-                    alert(data.error || 'Failed to save clothing item. Please try again.');
+                    throw new Error(data.error || 'Failed to save clothing item');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred. Please try again.');
+                alert(error.message || 'An error occurred. Please try again.');
             }
         });
 

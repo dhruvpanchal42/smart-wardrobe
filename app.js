@@ -28,11 +28,26 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 app.use(expressSession({
-    secret: process.env.SESSION_SECRET || 'dcube',
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } 
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // set to true if using HTTPS
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
+
+// Trust first proxy for secure cookies behind reverse proxies
+app.set('trust proxy', 1);
+
+// Add this middleware to handle redirects
+app.use((req, res, next) => {
+    // Get the host from the request
+    const host = req.get('host');
+    // Set a local variable for views to use
+    res.locals.baseUrl = `${req.protocol}://${host}`;
+    next();
+});
 
 // Initialize Passport.js for OAuth
 app.use(passport.initialize());
@@ -40,6 +55,7 @@ app.use(passport.session());
 
 // Define routes
 app.use('/', indexRouter);
+app.use('/users', forgotPasswordRoutes);
 app.use('/users', userRouter);
 app.use('/clothes', clothRouter);
 app.use(weatherRoute);

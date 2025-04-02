@@ -336,7 +336,9 @@
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Unisex">Unisex</option>
+                    <option value="Other">Other</option>
                 </select>
+                <input type="text" id="custom_gender" name="custom_gender" class="custom-input w-full p-2 rounded mt-2" placeholder="Enter custom gender" style="display: none;">
             </div>
 
             <div class="form-group">
@@ -351,18 +353,24 @@
                     <option value="Dress">Dress</option>
                     <option value="Skirt">Skirt</option>
                     <option value="Top">Top</option>
+                    <option value="Other">Other</option>
                 </select>
+                <input type="text" id="custom_subcategory" name="custom_subcategory" class="custom-input w-full p-2 rounded mt-2" placeholder="Enter custom subcategory" style="display: none;">
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="size">Size</label>
                 <select id="size" name="size" class="w-full p-2 rounded" required>
                     <option value="">Select Size</option>
+                    <option value="XS">XS</option>
                     <option value="Small">Small</option>
                     <option value="Medium">Medium</option>
                     <option value="Large">Large</option>
-                    <option value="Extra Large">Extra Large</option>
+                    <option value="XL">Extra Large</option>
+                    <option value="XXL">XXL</option>
+                    <option value="Other">Other</option>
                 </select>
+                <input type="text" id="custom_size" name="custom_size" class="custom-input w-full p-2 rounded mt-2" placeholder="Enter custom size" style="display: none;">
             </div>
 
             <div class="form-group">
@@ -374,7 +382,14 @@
                     <option value="Green">Green</option>
                     <option value="Black">Black</option>
                     <option value="White">White</option>
+                    <option value="Yellow">Yellow</option>
+                    <option value="Purple">Purple</option>
+                    <option value="Pink">Pink</option>
+                    <option value="Brown">Brown</option>
+                    <option value="Gray">Gray</option>
+                    <option value="Other">Other</option>
                 </select>
+                <input type="text" id="custom_color" name="custom_color" class="custom-input w-full p-2 rounded mt-2" placeholder="Enter custom color" style="display: none;">
             </div>
 
             <div class="form-group">
@@ -387,7 +402,9 @@
                     <option value="Silk">Silk</option>
                     <option value="Denim">Denim</option>
                     <option value="Linen">Linen</option>
+                    <option value="Other">Other</option>
                 </select>
+                <input type="text" id="custom_fabric" name="custom_fabric" class="custom-input w-full p-2 rounded mt-2" placeholder="Enter custom fabric" style="display: none;">
             </div>
 
             <div class="form-group">
@@ -399,7 +416,9 @@
                     <option value="Sports">Sports</option>
                     <option value="Party">Party</option>
                     <option value="Business">Business</option>
+                    <option value="Other">Other</option>
                 </select>
+                <input type="text" id="custom_occasion" name="custom_occasion" class="custom-input w-full p-2 rounded mt-2" placeholder="Enter custom occasion" style="display: none;">
             </div>
 
             <div class="form-group">
@@ -411,7 +430,9 @@
                     <option value="Cold">Cold</option>
                     <option value="Hot">Hot</option>
                     <option value="All Weather">All Weather</option>
+                    <option value="Other">Other</option>
                 </select>
+                <input type="text" id="custom_weather" name="custom_weather" class="custom-input w-full p-2 rounded mt-2" placeholder="Enter custom weather" style="display: none;">
             </div>
 
             <div class="form-group">
@@ -587,6 +608,38 @@
             } else {
                 preview.style.display = 'none';
             }
+        });
+
+        // Handle custom input fields
+        document.querySelectorAll('select').forEach(select => {
+            const customInput = document.getElementById('custom_' + select.id);
+            if (customInput) {
+                select.addEventListener('change', function() {
+                    if (this.value === 'Other') {
+                        customInput.style.display = 'block';
+                        customInput.required = true;
+                        this.required = false;
+                    } else {
+                        customInput.style.display = 'none';
+                        customInput.required = false;
+                        this.required = true;
+                    }
+                });
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('addClothesForm').addEventListener('submit', function(e) {
+            const selects = ['gender', 'subcategory', 'size', 'color', 'fabric', 'occasion', 'weather'];
+            
+            selects.forEach(field => {
+                const select = document.getElementById(field);
+                const customInput = document.getElementById('custom_' + field);
+                
+                if (select.value === 'Other' && customInput) {
+                    select.value = customInput.value;
+                }
+            });
         });
     </script>
 </body>

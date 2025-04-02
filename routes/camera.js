@@ -4,24 +4,13 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const isLoggedIn = require('../middlewares/isLoggedIn');
+const { bucket } = require('../config/firebase'); // Import Firebase bucket
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configure multer for handling file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadsDir);
-    },
-    filename: function (req, file, cb) {
-        cb(null, `clothing_${Date.now()}.jpg`);
-    }
+// Configure multer to use memory storage
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
-
-const upload = multer({ storage: storage });
 
 // Camera page route - protected with isLoggedIn middleware
 router.get('/', isLoggedIn, (req, res) => {
@@ -46,17 +35,36 @@ router.post('/analyze', isLoggedIn, async (req, res) => {
 
         // Generate filename
         const filename = `clothing_${Date.now()}.jpg`;
-        const filepath = path.join(uploadsDir, filename);
+        const file = bucket.file(filename);
 
-        // Save the image
-        fs.writeFileSync(filepath, buffer);
-
-        // Return the analysis results and image path
-        res.json({
-            success: true,
-            analysis: analysis,
-            imagePath: `/uploads/${filename}`
+        // Upload to Firebase Storage
+        const stream = file.createWriteStream({
+            metadata: {
+                contentType: 'image/jpeg',
+            },
         });
+
+        stream.on('error', (err) => {
+            console.error('Upload to Firebase failed:', err);
+            return res.status(500).json({
+                success: false,
+                error: 'Error uploading image to storage'
+            });
+        });
+
+        stream.on('finish', async () => {
+            // Get the public URL
+            const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(file.name)}?alt=media`;
+
+            // Return the analysis results and image URL
+            res.json({
+                success: true,
+                analysis: analysis,
+                imagePath: imageUrl
+            });
+        });
+
+        stream.end(buffer);
     } catch (error) {
         console.error('Error processing image:', error);
         res.status(500).json({

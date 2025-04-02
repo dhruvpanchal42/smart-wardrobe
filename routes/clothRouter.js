@@ -66,14 +66,11 @@ router.post('/add-clothes', isLoggedIn, async (req, res) => {
                 });
             }
 
-            // Handle base64 image if provided
-            let imageUrl = '';
-            if (image && image.startsWith('/uploads/')) {
-                imageUrl = image;
-            } else {
+            // Validate image URL
+            if (!image || !image.startsWith('https://firebasestorage.googleapis.com/')) {
                 return res.status(400).json({
                     success: false,
-                    error: 'Invalid image path'
+                    error: 'Invalid image URL'
                 });
             }
 
@@ -88,7 +85,7 @@ router.post('/add-clothes', isLoggedIn, async (req, res) => {
                 fabric,
                 occasion,
                 weather,
-                image: imageUrl
+                image: image
             });
 
             await newCloth.save();
